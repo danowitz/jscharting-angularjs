@@ -4828,5 +4828,3 @@
   }]);
 
 })(angular);
-
-//# sourceMappingURL=jscharting-angularjs.js.map
