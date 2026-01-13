@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nested Pie Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 500px; height: 500px; margin: 0px auto;">
+    <jsc-chart jsc-options="vm.chartOptions" jsc-series="vm.series"></jsc-chart>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/types.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'pie donut',
+          title_label_text: 'Browser Market Share',
+          legend_position: 'bottom',
+          defaultPoint_label_text: '<b>%name</b>'
+        };
+
+        vm.series = [
+          {
+            name: 'Browsers',
+            shape_innerSize: '40%',
+            points: [
+              { name: 'Chrome', y: 65 },
+              { name: 'Safari', y: 18 },
+              { name: 'Firefox', y: 8 },
+              { name: 'Edge', y: 6 },
+              { name: 'Other', y: 3 }
+            ]
+          }
+        ];
+      });
+  </script>
+</body>
+</html>

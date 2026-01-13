@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Gauge Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 440px; height: 400px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/types.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    Gauge with two points of varying lengths.
+    Learn how to:
+      - Draw a gauge chart.
+      - Control Gauge Needle lengths.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'gauge',
+          yAxis_scale: { range: [0, 80] },
+          legend: { position: 'bottom' },
+          defaultTooltip_enabled: false
+        };
+
+        vm.series = [{
+          palette: 'default',
+          name: 'Temperatures',
+          shape: {
+            label: { text: 'Gauge Needles', verticalAlign: 'top' }
+          },
+          defaultPoint_tooltip: '<b>%name</b> %yValue',
+          points: [
+            {
+              name: 'Low Limit',
+              y: 20,
+              marker_length: [0.2, 0.6]
+            },
+            {
+              name: 'Low',
+              y: 30,
+              marker_length: 0.6
+            },
+            {
+              name: 'High',
+              y: 50,
+              marker_length: [0, 0.8]
+            },
+            {
+              name: 'High Limit',
+              y: 60,
+              marker_length: [0.5, 0.8]
+            }
+          ]
+        }];
+      });
+  </script>
+
+</body>
+</html>

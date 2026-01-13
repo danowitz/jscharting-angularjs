@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Axis Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart jsc-options="vm.chartOptions" jsc-series="vm.series"></jsc-chart>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          title_label_text: 'Temperature & Precipitation',
+          legend_position: 'inside top right',
+          xAxis_crosshair_enabled: true,
+          yAxis: [
+            { id: 'temp', label_text: 'Temperature (°F)', formatString: 'n0' },
+            { id: 'precip', label_text: 'Precipitation (in)', orientation: 'right', formatString: 'n1' }
+          ]
+        };
+
+        vm.series = [
+          {
+            name: 'Temperature',
+            type: 'line',
+            yAxis: 'temp',
+            points: [
+              ['Jan', 32], ['Feb', 35], ['Mar', 45], ['Apr', 55],
+              ['May', 65], ['Jun', 75], ['Jul', 82], ['Aug', 80],
+              ['Sep', 72], ['Oct', 58], ['Nov', 45], ['Dec', 35]
+            ]
+          },
+          {
+            name: 'Precipitation',
+            type: 'column',
+            yAxis: 'precip',
+            points: [
+              ['Jan', 3.2], ['Feb', 2.8], ['Mar', 4.1], ['Apr', 3.5],
+              ['May', 4.2], ['Jun', 3.8], ['Jul', 4.5], ['Aug', 4.0],
+              ['Sep', 3.6], ['Oct', 3.2], ['Nov', 3.8], ['Dec', 3.5]
+            ]
+          }
+        ];
+      });
+  </script>
+</body>
+</html>

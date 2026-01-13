@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Line Chart | JSCharting AngularJS</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #chartDiv { width: 100%; max-width: 800px; height: 400px; margin: 0 auto; }
+  </style>
+</head>
+<body ng-controller="ChartController as vm">
+
+  <jsc-chart
+    jsc-options="vm.chartOptions"
+    jsc-instance="vm.chart">
+  </jsc-chart>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .config(['jscModuleLoaderProvider', function(jscModuleLoaderProvider) {
+        jscModuleLoaderProvider.setBaseUrl('../node_modules/jscharting/dist/');
+      }])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          type: 'line',
+          title: {
+            label: { text: 'Monthly Temperature Comparison' }
+          },
+          legend: { position: 'bottom' },
+          xAxis: {
+            label: { text: 'Month' }
+          },
+          yAxis: {
+            label: { text: 'Temperature (°C)' }
+          },
+          defaultPoint: {
+            tooltip: '%seriesName<br/>%name: <b>%yValue°C</b>'
+          },
+          series: [
+            {
+              name: 'Tokyo',
+              points: [
+                ['Jan', 7], ['Feb', 8], ['Mar', 12], ['Apr', 17],
+                ['May', 22], ['Jun', 25], ['Jul', 29], ['Aug', 30],
+                ['Sep', 26], ['Oct', 20], ['Nov', 14], ['Dec', 9]
+              ]
+            },
+            {
+              name: 'New York',
+              points: [
+                ['Jan', 0], ['Feb', 1], ['Mar', 7], ['Apr', 13],
+                ['May', 18], ['Jun', 24], ['Jul', 27], ['Aug', 26],
+                ['Sep', 22], ['Oct', 15], ['Nov', 9], ['Dec', 3]
+              ]
+            },
+            {
+              name: 'London',
+              points: [
+                ['Jan', 5], ['Feb', 5], ['Mar', 8], ['Apr', 11],
+                ['May', 14], ['Jun', 18], ['Jul', 20], ['Aug', 20],
+                ['Sep', 17], ['Oct', 13], ['Nov', 9], ['Dec', 6]
+              ]
+            }
+          ]
+        };
+      });
+  </script>
+
+</body>
+</html>

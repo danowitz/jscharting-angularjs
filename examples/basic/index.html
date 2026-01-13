@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="demoApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSCharting AngularJS - Basic Examples</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      margin: 0 0 10px 0;
+      color: #333;
+    }
+    .header p {
+      color: #666;
+      margin: 0;
+    }
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .chart-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+    .chart-card h3 {
+      margin: 0 0 15px 0;
+      color: #333;
+      font-size: 16px;
+    }
+    .chart-container {
+      height: 300px;
+    }
+    .info-panel {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f9f9f9;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #666;
+    }
+  </style>
+</head>
+<body ng-controller="DemoController as vm">
+
+  <div class="header">
+    <h1>JSCharting AngularJS Examples</h1>
+    <p>Demonstrating various chart types using the AngularJS wrapper</p>
+  </div>
+
+  <div class="chart-grid">
+
+    <!-- Line Chart -->
+    <div class="chart-card">
+      <h3>Line Chart</h3>
+      <div class="chart-container">
+        <jsc-chart
+          jsc-type="line"
+          jsc-options="vm.lineChartOptions"
+          jsc-series="vm.lineData"
+          jsc-on-point-click="vm.onPointClick(point, chart)"
+          jsc-instance="vm.lineChart">
+        </jsc-chart>
+      </div>
+      <div class="info-panel" ng-if="vm.lastClicked">
+        Last clicked: {{vm.lastClicked.name}} = {{vm.lastClicked.y}}
+      </div>
+    </div>
+
+    <!-- Column Chart -->
+    <div class="chart-card">
+      <h3>Column Chart</h3>
+      <div class="chart-container">
+        <jsc-chart
+          jsc-type="column"
+          jsc-options="vm.columnChartOptions"
+          jsc-series="vm.columnData">
+        </jsc-chart>
+      </div>
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="chart-card">
+      <h3>Pie Chart</h3>
+      <div class="chart-container">
+        <jsc-chart
+          jsc-type="pie"
+          jsc-options="vm.pieChartOptions"
+          jsc-series="vm.pieData">
+        </jsc-chart>
+      </div>
+    </div>
+
+    <!-- Area Chart -->
+    <div class="chart-card">
+      <h3>Stacked Area Chart</h3>
+      <div class="chart-container">
+        <jsc-chart
+          jsc-type="area stacked"
+          jsc-options="vm.areaChartOptions"
+          jsc-series="vm.areaData">
+        </jsc-chart>
+      </div>
+    </div>
+
+    <!-- Bar Chart -->
+    <div class="chart-card">
+      <h3>Horizontal Bar Chart</h3>
+      <div class="chart-container">
+        <jsc-chart
+          jsc-type="horizontal column"
+          jsc-options="vm.barChartOptions"
+          jsc-series="vm.barData">
+        </jsc-chart>
+      </div>
+    </div>
+
+    <!-- Scatter Chart -->
+    <div class="chart-card">
+      <h3>Scatter Chart</h3>
+      <div class="chart-container">
+        <jsc-chart
+          jsc-type="scatter"
+          jsc-options="vm.scatterChartOptions"
+          jsc-series="vm.scatterData">
+        </jsc-chart>
+      </div>
+    </div>
+
+    <!-- Dynamic Update Demo -->
+    <div class="chart-card">
+      <h3>Real-time Updates</h3>
+      <div class="chart-container">
+        <jsc-chart
+          jsc-type="line spline"
+          jsc-options="vm.realtimeOptions"
+          jsc-series="vm.realtimeData"
+          jsc-instance="vm.realtimeChart">
+        </jsc-chart>
+      </div>
+      <div class="info-panel">
+        <button ng-click="vm.toggleRealtime()">
+          {{vm.realtimeRunning ? 'Stop' : 'Start'}} Updates
+        </button>
+        <span style="margin-left: 10px;">Data points: {{vm.realtimeData[0].points.length}}</span>
+      </div>
+    </div>
+
+    <!-- Combo Chart -->
+    <div class="chart-card">
+      <h3>Combination Chart</h3>
+      <div class="chart-container">
+        <jsc-chart
+          jsc-options="vm.comboChartOptions"
+          jsc-series="vm.comboData">
+        </jsc-chart>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('demoApp', ['jsc.angular'])
+
+      .config(['jscConfigProvider', 'jscModuleLoaderProvider',
+        function(jscConfigProvider, jscModuleLoaderProvider) {
+          // Set module base URL
+          jscModuleLoaderProvider.setBaseUrl('../../node_modules/jscharting/dist/');
+
+          // Set global defaults
+          jscConfigProvider
+            .setDebug(false)
+            .setAnimation({ duration: 400 });
+        }
+      ])
+
+      .controller('DemoController', ['$interval', function($interval) {
+        var vm = this;
+
+        // Line Chart
+        vm.lineChartOptions = {
+          title: { label: { text: 'Monthly Revenue' } },
+          legend: { position: 'bottom' },
+          yAxis: { label: { text: 'Revenue ($)' } }
+        };
+
+        vm.lineData = [
+          {
+            name: '2023',
+            points: [
+              ['Jan', 45000], ['Feb', 52000], ['Mar', 48000],
+              ['Apr', 61000], ['May', 55000], ['Jun', 67000]
+            ]
+          },
+          {
+            name: '2024',
+            points: [
+              ['Jan', 51000], ['Feb', 58000], ['Mar', 54000],
+              ['Apr', 72000], ['May', 68000], ['Jun', 79000]
+            ]
+          }
+        ];
+
+        // Column Chart
+        vm.columnChartOptions = {
+          title: { label: { text: 'Product Sales' } },
+          legend: { visible: false },
+          palette: ['#4CAF50', '#2196F3', '#FF5722', '#9C27B0']
+        };
+
+        vm.columnData = [{
+          name: 'Sales',
+          points: [
+            { name: 'Product A', y: 245 },
+            { name: 'Product B', y: 312 },
+            { name: 'Product C', y: 178 },
+            { name: 'Product D', y: 289 }
+          ]
+        }];
+
+        // Pie Chart
+        vm.pieChartOptions = {
+          title: { label: { text: 'Market Share' } },
+          legend: { position: 'right' },
+          defaultPoint: {
+            tooltip: '<b>%name</b><br/>%percentOfTotal%'
+          }
+        };
+
+        vm.pieData = [{
+          points: [
+            { name: 'Chrome', y: 65 },
+            { name: 'Safari', y: 18 },
+            { name: 'Firefox', y: 10 },
+            { name: 'Edge', y: 5 },
+            { name: 'Other', y: 2 }
+          ]
+        }];
+
+        // Area Chart
+        vm.areaChartOptions = {
+          title: { label: { text: 'Traffic Sources' } },
+          legend: { position: 'bottom' }
+        };
+
+        vm.areaData = [
+          { name: 'Organic', points: [40, 45, 48, 52, 55, 60] },
+          { name: 'Direct', points: [20, 22, 25, 28, 30, 32] },
+          { name: 'Referral', points: [15, 18, 16, 20, 22, 25] }
+        ];
+
+        // Bar Chart
+        vm.barChartOptions = {
+          title: { label: { text: 'Top Countries' } },
+          legend: { visible: false },
+          yAxis: { label: { text: 'Users' } }
+        };
+
+        vm.barData = [{
+          points: [
+            { name: 'USA', y: 42000 },
+            { name: 'UK', y: 28000 },
+            { name: 'Germany', y: 21000 },
+            { name: 'France', y: 18000 },
+            { name: 'Japan', y: 15000 }
+          ]
+        }];
+
+        // Scatter Chart
+        vm.scatterChartOptions = {
+          title: { label: { text: 'Price vs Rating' } },
+          xAxis: { label: { text: 'Price ($)' } },
+          yAxis: { label: { text: 'Rating' } }
+        };
+
+        vm.scatterData = [{
+          name: 'Products',
+          points: [
+            { x: 25, y: 4.2 }, { x: 45, y: 4.5 }, { x: 30, y: 3.8 },
+            { x: 60, y: 4.8 }, { x: 35, y: 4.1 }, { x: 50, y: 4.4 },
+            { x: 40, y: 3.9 }, { x: 55, y: 4.6 }, { x: 28, y: 4.0 },
+            { x: 65, y: 4.9 }
+          ]
+        }];
+
+        // Real-time Chart
+        vm.realtimeOptions = {
+          title: { label: { text: 'Live Data' } },
+          legend: { visible: false },
+          xAxis: { scale: { type: 'time' } },
+          animation: { duration: 300 }
+        };
+
+        vm.realtimeData = [{
+          name: 'Value',
+          points: generateInitialData()
+        }];
+
+        vm.realtimeRunning = false;
+        var realtimeInterval = null;
+
+        function generateInitialData() {
+          var points = [];
+          var now = Date.now();
+          for (var i = 20; i >= 0; i--) {
+            points.push({
+              x: new Date(now - i * 1000),
+              y: Math.random() * 100
+            });
+          }
+          return points;
+        }
+
+        vm.toggleRealtime = function() {
+          if (vm.realtimeRunning) {
+            $interval.cancel(realtimeInterval);
+            vm.realtimeRunning = false;
+          } else {
+            vm.realtimeRunning = true;
+            realtimeInterval = $interval(function() {
+              if (vm.realtimeChart) {
+                vm.realtimeChart.series(0).points.add({
+                  x: new Date(),
+                  y: Math.random() * 100
+                }, { shift: vm.realtimeData[0].points.length > 20 });
+              }
+            }, 1000);
+          }
+        };
+
+        // Combo Chart
+        vm.comboChartOptions = {
+          title: { label: { text: 'Sales & Profit Margin' } },
+          legend: { position: 'bottom' },
+          yAxis: [
+            { id: 'sales', label: { text: 'Sales ($)' } },
+            { id: 'margin', label: { text: 'Margin (%)' }, orientation: 'right' }
+          ]
+        };
+
+        vm.comboData = [
+          {
+            name: 'Sales',
+            type: 'column',
+            yAxis: 'sales',
+            points: [['Q1', 120000], ['Q2', 145000], ['Q3', 132000], ['Q4', 168000]]
+          },
+          {
+            name: 'Profit Margin',
+            type: 'line spline',
+            yAxis: 'margin',
+            points: [['Q1', 22], ['Q2', 28], ['Q3', 25], ['Q4', 32]]
+          }
+        ];
+
+        // Event Handlers
+        vm.lastClicked = null;
+
+        vm.onPointClick = function(point, chart) {
+          vm.lastClicked = {
+            name: point.tokenValue('%name'),
+            y: point.tokenValue('%yValue')
+          };
+        };
+
+        // Cleanup
+        vm.$onDestroy = function() {
+          if (realtimeInterval) {
+            $interval.cancel(realtimeInterval);
+          }
+        };
+      }]);
+  </script>
+
+</body>
+</html>

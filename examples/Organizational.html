@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organizational Chart | JSCharting AngularJS</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .chart-container { width: 100%; max-width: 1000px; height: 600px; margin: 0 auto; }
+    .info { text-align: center; margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px; }
+  </style>
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container">
+    <jsc-org-chart
+      jsc-series="vm.orgData"
+      jsc-options="vm.chartOptions"
+      jsc-on-point-click="vm.onNodeClick(point)"
+      jsc-instance="vm.chart">
+    </jsc-org-chart>
+  </div>
+
+  <div class="info" ng-if="vm.selectedPerson">
+    <h3 style="margin: 0 0 10px 0;">{{vm.selectedPerson.name}}</h3>
+    <p style="margin: 0; color: #666;">{{vm.selectedPerson.title}}</p>
+    <p style="margin: 5px 0 0 0; color: #888;">{{vm.selectedPerson.department}}</p>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/types.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .config(['jscModuleLoaderProvider', function(jscModuleLoaderProvider) {
+        jscModuleLoaderProvider.setBaseUrl('../node_modules/jscharting/dist/');
+      }])
+      .controller('ChartController', ['$scope', function($scope) {
+        var vm = this;
+        vm.selectedPerson = null;
+
+        vm.chartOptions = {
+          title: {
+            label: { text: 'Company Organization' }
+          },
+          defaultPoint: {
+            connectorLine: {
+              width: 2,
+              color: '#BDBDBD'
+            },
+            outline: {
+              width: 2,
+              color: '#2196F3'
+            },
+            label: {
+              text: '<b>%name</b><br/><span style="color:#666">%title</span>',
+              autoWrap: false
+            },
+            tooltip: '<b>%name</b><br/>%title<br/>%department'
+          },
+          palette: ['#E3F2FD', '#BBDEFB', '#90CAF9', '#64B5F6']
+        };
+
+        vm.orgData = [{
+          name: 'Company',
+          points: [
+            {
+              id: 'ceo',
+              name: 'Sarah Johnson',
+              attributes: { title: 'CEO', department: 'Executive' }
+            },
+            {
+              id: 'cto',
+              parent: 'ceo',
+              name: 'Michael Chen',
+              attributes: { title: 'CTO', department: 'Technology' }
+            },
+            {
+              id: 'cfo',
+              parent: 'ceo',
+              name: 'Emily Davis',
+              attributes: { title: 'CFO', department: 'Finance' }
+            },
+            {
+              id: 'coo',
+              parent: 'ceo',
+              name: 'James Wilson',
+              attributes: { title: 'COO', department: 'Operations' }
+            },
+            {
+              id: 'dev_lead',
+              parent: 'cto',
+              name: 'Alex Kim',
+              attributes: { title: 'Dev Lead', department: 'Engineering' }
+            },
+            {
+              id: 'qa_lead',
+              parent: 'cto',
+              name: 'Lisa Park',
+              attributes: { title: 'QA Lead', department: 'Quality' }
+            },
+            {
+              id: 'finance_mgr',
+              parent: 'cfo',
+              name: 'Robert Brown',
+              attributes: { title: 'Finance Manager', department: 'Finance' }
+            },
+            {
+              id: 'ops_mgr',
+              parent: 'coo',
+              name: 'Maria Garcia',
+              attributes: { title: 'Operations Manager', department: 'Operations' }
+            },
+            {
+              id: 'dev1',
+              parent: 'dev_lead',
+              name: 'Tom Anderson',
+              attributes: { title: 'Senior Developer', department: 'Engineering' }
+            },
+            {
+              id: 'dev2',
+              parent: 'dev_lead',
+              name: 'Amy Taylor',
+              attributes: { title: 'Developer', department: 'Engineering' }
+            }
+          ]
+        }];
+
+        vm.onNodeClick = function(point) {
+          vm.selectedPerson = {
+            name: point.tokenValue('%name'),
+            title: point.tokenValue('%title'),
+            department: point.tokenValue('%department')
+          };
+          $scope.$apply();
+        };
+      }]);
+  </script>
+
+</body>
+</html>

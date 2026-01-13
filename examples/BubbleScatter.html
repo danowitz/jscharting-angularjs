@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bubble Scatter Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 500px; margin: 0px auto;">
+    <jsc-chart jsc-options="vm.chartOptions" jsc-series="vm.series"></jsc-chart>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'bubble',
+          title_label_text: 'Company Performance Analysis',
+          legend_visible: false,
+          xAxis_label_text: 'Market Share (%)',
+          yAxis_label_text: 'Growth Rate (%)',
+          zAxis_label_text: 'Revenue (M$)',
+          defaultPoint: {
+            tooltip: '<b>%name</b><br>Market Share: %xValue%<br>Growth: %yValue%<br>Revenue: $%zValueM',
+            label_text: '%name'
+          }
+        };
+
+        vm.series = [{
+          name: 'Companies',
+          points: [
+            { name: 'Apple', x: 25, y: 12, z: 394 },
+            { name: 'Microsoft', x: 22, y: 15, z: 198 },
+            { name: 'Google', x: 18, y: 18, z: 282 },
+            { name: 'Amazon', x: 15, y: 22, z: 514 },
+            { name: 'Meta', x: 8, y: -5, z: 117 },
+            { name: 'Netflix', x: 5, y: 8, z: 32 },
+            { name: 'Tesla', x: 4, y: 35, z: 81 }
+          ]
+        }];
+      });
+  </script>
+</body>
+</html>

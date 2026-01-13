@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Export Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="controls">
+    <button ng-click="vm.exportPNG()">Export PNG</button>
+    <button ng-click="vm.exportSVG()">Export SVG</button>
+    <button ng-click="vm.print()">Print</button>
+  </div>
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series"
+      jsc-instance="vm.chart">
+    </jsc-chart>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/toolbar.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', ['jscChartFactory', function(jscChartFactory) {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'column',
+          title_label_text: 'Sales Report - Export Demo',
+          legend_position: 'bottom',
+          yAxis: { label_text: 'Sales ($)', formatString: 'c' }
+        };
+
+        vm.series = [
+          {
+            name: 'Product A',
+            points: [
+              ['Jan', 15000], ['Feb', 18000], ['Mar', 22000],
+              ['Apr', 19000], ['May', 24000], ['Jun', 28000]
+            ]
+          },
+          {
+            name: 'Product B',
+            points: [
+              ['Jan', 12000], ['Feb', 14000], ['Mar', 16000],
+              ['Apr', 18000], ['May', 21000], ['Jun', 23000]
+            ]
+          }
+        ];
+
+        vm.exportPNG = function() {
+          if (vm.chart) {
+            jscChartFactory.exportImage(vm.chart, { type: 'png', filename: 'chart-export' });
+          }
+        };
+
+        vm.exportSVG = function() {
+          if (vm.chart) {
+            jscChartFactory.exportImage(vm.chart, { type: 'svg', filename: 'chart-export' });
+          }
+        };
+
+        vm.print = function() {
+          if (vm.chart) {
+            jscChartFactory.print(vm.chart);
+          }
+        };
+      }]);
+  </script>
+</body>
+</html>

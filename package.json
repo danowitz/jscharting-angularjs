@@ -1,0 +1,62 @@
+{
+  "name": "jscharting-angularjs",
+  "version": "1.0.0",
+  "description": "Comprehensive AngularJS wrapper for JSCharting v3.4 - Exposes all 150+ chart types through AngularJS directives and services",
+  "main": "dist/jscharting-angularjs.js",
+  "scripts": {
+    "start": "node server.js",
+    "examples": "node server.js",
+    "build": "gulp build",
+    "build:prod": "gulp build:prod",
+    "watch": "gulp watch",
+    "test": "karma start karma.conf.js",
+    "test:watch": "karma start karma.conf.js --auto-watch --no-single-run",
+    "lint": "eslint src/**/*.js"
+  },
+  "keywords": [
+    "jscharting",
+    "angularjs",
+    "angular",
+    "charts",
+    "charting",
+    "visualization",
+    "graphs",
+    "maps",
+    "gauges",
+    "widgets"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "angular": "^1.8.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "jscharting": "^3.4.0"
+  },
+  "devDependencies": {
+    "angular": "^1.8.3",
+    "angular-mocks": "^1.8.3",
+    "del": "^6.1.1",
+    "eslint": "^8.56.0",
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-header": "^2.0.9",
+    "gulp-rename": "^2.0.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-uglify": "^3.0.2",
+    "jasmine-core": "^5.1.1",
+    "karma": "^6.4.2",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-jasmine": "^5.1.0",
+    "karma-spec-reporter": "^0.0.36"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "homepage": ""
+}

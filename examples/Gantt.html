@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gantt Chart | JSCharting AngularJS</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .chart-container { width: 100%; max-width: 1000px; height: 500px; margin: 0 auto; }
+  </style>
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container">
+    <jsc-gantt
+      jsc-series="vm.taskData"
+      jsc-options="vm.chartOptions"
+      jsc-on-point-click="vm.onTaskClick(point)"
+      jsc-instance="vm.chart">
+    </jsc-gantt>
+  </div>
+
+  <div style="text-align: center; margin-top: 20px;" ng-if="vm.selectedTask">
+    <strong>{{vm.selectedTask.name}}</strong><br/>
+    {{vm.selectedTask.start}} - {{vm.selectedTask.end}}
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/types.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .config(['jscModuleLoaderProvider', function(jscModuleLoaderProvider) {
+        jscModuleLoaderProvider.setBaseUrl('../node_modules/jscharting/dist/');
+      }])
+      .controller('ChartController', ['$scope', function($scope) {
+        var vm = this;
+        vm.selectedTask = null;
+
+        // Helper to create dates
+        function date(year, month, day) {
+          return new Date(year, month - 1, day);
+        }
+
+        vm.chartOptions = {
+          title: {
+            label: { text: 'Project Timeline' }
+          },
+          legend: { visible: false },
+          palette: ['#4CAF50', '#2196F3', '#FF9800', '#9C27B0'],
+          defaultPoint: {
+            tooltip: '<b>%name</b><br/>Start: %start<br/>End: %end<br/>Duration: %days days',
+            label: {
+              text: '%name',
+              color: 'white'
+            }
+          }
+        };
+
+        vm.taskData = [{
+          name: 'Project Tasks',
+          points: [
+            {
+              name: 'Planning',
+              y: 'Phase 1',
+              x: [date(2024, 1, 1), date(2024, 1, 15)]
+            },
+            {
+              name: 'Design',
+              y: 'Phase 1',
+              x: [date(2024, 1, 10), date(2024, 2, 1)]
+            },
+            {
+              name: 'Development',
+              y: 'Phase 2',
+              x: [date(2024, 2, 1), date(2024, 4, 1)]
+            },
+            {
+              name: 'Testing',
+              y: 'Phase 2',
+              x: [date(2024, 3, 15), date(2024, 4, 15)]
+            },
+            {
+              name: 'Deployment',
+              y: 'Phase 3',
+              x: [date(2024, 4, 15), date(2024, 5, 1)]
+            },
+            {
+              name: 'Maintenance',
+              y: 'Phase 3',
+              x: [date(2024, 5, 1), date(2024, 6, 1)]
+            }
+          ]
+        }];
+
+        vm.onTaskClick = function(point) {
+          var xVal = point.tokenValue('%xValue');
+          vm.selectedTask = {
+            name: point.tokenValue('%name'),
+            start: point.tokenValue('%start'),
+            end: point.tokenValue('%end')
+          };
+          $scope.$apply();
+        };
+      }]);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bar Chart | JSCharting AngularJS</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #chartDiv { width: 100%; max-width: 800px; height: 400px; margin: 0 auto; }
+  </style>
+</head>
+<body ng-controller="ChartController as vm">
+
+  <jsc-chart
+    jsc-options="vm.chartOptions"
+    jsc-instance="vm.chart">
+  </jsc-chart>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .config(['jscModuleLoaderProvider', function(jscModuleLoaderProvider) {
+        jscModuleLoaderProvider.setBaseUrl('../node_modules/jscharting/dist/');
+      }])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          type: 'column',
+          title: {
+            label: { text: 'Browser Market Share' }
+          },
+          legend: { visible: false },
+          yAxis: {
+            label: { text: 'Market Share (%)' }
+          },
+          defaultPoint: {
+            tooltip: '<b>%name</b><br/>%yValue%'
+          },
+          series: [{
+            name: 'Browsers',
+            points: [
+              { name: 'Chrome', y: 65.7, color: '#4285F4' },
+              { name: 'Safari', y: 18.4, color: '#FF9500' },
+              { name: 'Firefox', y: 3.1, color: '#FF6611' },
+              { name: 'Edge', y: 4.9, color: '#0078D7' },
+              { name: 'Other', y: 7.9, color: '#888888' }
+            ]
+          }]
+        };
+      });
+  </script>
+
+</body>
+</html>

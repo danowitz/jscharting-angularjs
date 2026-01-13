@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Heatmap Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/types.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    Using a smartPalette with an interactive legend colorBar on a heatMap.
+    Learn how to:
+      - Draw a heatmap chart with a smartPalette.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'heatmap',
+          toolbar_visible: false,
+          title_label_text: 'Call Response Time (Minutes)',
+          legend_title_label_text: 'Minutes',
+          palette: {
+            colors: ['green', 'yellow', 'red'],
+            pointValue: '{%zValue}'
+          },
+          defaultPoint: {
+            tooltip: '<b>%xValue</b> %yValue<br/>Response time: %zValuemin',
+            label_text: '%zValue',
+            outline_width: 0
+          }
+        };
+
+        vm.series = [{
+          name: 'Call Response Time.',
+          points: [
+            { x: 'Josh', y: 'Monday', z: 1 },
+            { x: 'Josh', y: 'Tuesday', z: 6 },
+            { x: 'Josh', y: 'Wednesday', z: 3 },
+            { x: 'Josh', y: 'Thursday', z: 2 },
+            { x: 'Josh', y: 'Friday', z: 5 },
+            { x: 'Josh', y: 'Saturday', z: 1 },
+            { x: 'Greg', y: 'Monday', z: 4 },
+            { x: 'Greg', y: 'Tuesday', z: 6 },
+            { x: 'Greg', y: 'Wednesday', z: 1 },
+            { x: 'Greg', y: 'Thursday', z: 8 },
+            { x: 'Greg', y: 'Friday', z: 6 },
+            { x: 'Greg', y: 'Saturday', z: 1 },
+            { x: 'Molly', y: 'Monday', z: 2 },
+            { x: 'Molly', y: 'Tuesday', z: 2 },
+            { x: 'Molly', y: 'Wednesday', z: 3 },
+            { x: 'Molly', y: 'Thursday', z: 1 },
+            { x: 'Molly', y: 'Friday', z: 2 },
+            { x: 'Molly', y: 'Saturday', z: 2 }
+          ]
+        }];
+      });
+  </script>
+
+</body>
+</html>

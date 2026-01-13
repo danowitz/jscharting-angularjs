@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Map Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-map
+      jsc-map="'world'"
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series">
+    </jsc-map>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/maps.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    A map of world countries.
+    Learn how to:
+      - Draw a simple world map.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          legend_visible: false,
+          mapping_projection: false
+        };
+
+        vm.series = [{
+          map: 'world',
+          palette: JSC.colorToPalette('rgb(251, 204, 155)', { hue: 0.1, saturation: 0.4, lightness: 0.3 }, 200, 1),
+          opacity: 0.8,
+          defaultPoint: {}
+        }];
+      });
+  </script>
+
+</body>
+</html>

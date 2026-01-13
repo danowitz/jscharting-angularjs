@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zoomable Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="controls">
+    <button ng-click="vm.resetZoom()">Reset Zoom</button>
+  </div>
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series"
+      jsc-instance="vm.chart">
+    </jsc-chart>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', ['jscChartFactory', function(jscChartFactory) {
+        var vm = this;
+
+        // Generate sample data
+        var points = [];
+        for (var i = 0; i < 100; i++) {
+          points.push({
+            x: new Date(2020, 0, i + 1),
+            y: Math.sin(i / 10) * 50 + 100 + Math.random() * 20
+          });
+        }
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'line',
+          title_label_text: 'Stock Price (Drag to Zoom)',
+          axisToZoom: 'x',
+          xAxis: {
+            scale_type: 'time',
+            crosshair_enabled: true
+          },
+          yAxis: {
+            formatString: 'c',
+            label_text: 'Price'
+          },
+          annotations: [{
+            position: 'inside top left',
+            label_text: 'Click and drag to zoom. Use button to reset.'
+          }]
+        };
+
+        vm.series = [{
+          name: 'Stock Price',
+          points: points
+        }];
+
+        vm.resetZoom = function() {
+          if (vm.chart) {
+            jscChartFactory.resetZoom(vm.chart);
+          }
+        };
+      }]);
+  </script>
+</body>
+</html>

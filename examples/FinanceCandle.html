@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finance Candlestick Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 350px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    A finance candlestick chart.
+    Learn how to:
+      - Draw a finance candlestick chart.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        function tooltip(point) {
+          var color = point.options('close') > point.options('open') ? 'green' : 'red';
+          return (
+            'Change: <span style="color:' +
+            color +
+            '"><b>{%close-%open}</b></span><br>Open: %open<br/>High: %high<br/>Low: %low<br/>Close: %close'
+          );
+        }
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'candlestick',
+          legend: {
+            template: '%icon %name',
+            position: 'inside top left'
+          },
+          yAxis_formatString: 'c',
+          xAxis_crosshair_enabled: true,
+          defaultPoint_tooltip: tooltip,
+          xAxis_scale_type: 'time'
+        };
+
+        vm.series = [{
+          name: 'MSFT',
+          points: [
+            ['11/15/2014', 93.87, 94.91, 93.7, 93.76],
+            ['11/16/2014', 93.91, 94.33, 92.07, 92.45],
+            ['11/17/2014', 93.14, 93.55, 91.52, 91.6],
+            ['11/18/2014', 92.56, 93, 92, 92.05],
+            ['11/21/2014', 92.03, 92.62, 91.22, 91.59],
+            ['11/22/2014', 91.9, 93.14, 91.81, 91.96],
+            ['11/23/2014', 92.32, 92.5, 91.18, 91.7],
+            ['11/25/2014', 91.87, 92.45, 91.41, 91.8],
+            ['11/28/2014', 93.19, 93.99, 93.07, 93.06],
+            ['11/29/2014', 93.54, 93.79, 93.11, 93.46],
+            ['11/30/2014', 94.85, 95.54, 94.64, 95.52],
+            ['12/1/2014', 95.44, 95.88, 95.22, 95.5],
+            ['12/2/2014', 96.37, 96.47, 95.32, 95.7],
+            ['12/5/2014', 96.42, 96.59, 95.08, 95.35],
+            ['12/6/2014', 95.47, 96.27, 94.82, 96.01],
+            ['12/7/2014', 95.83, 96.65, 95.5, 96.45],
+            ['12/8/2014', 97.03, 98.29, 96.72, 96.92],
+            ['12/9/2014', 97.67, 98.43, 97.62, 98.03],
+            ['12/12/2014', 97.67, 98.53, 97.2, 98.48],
+            ['12/13/2014', 98.74, 98.95, 97.76, 98],
+            ['12/14/2014', 97.76, 98.46, 97.16, 97.61],
+            ['12/15/2014', 98.51, 98.78, 97.86, 98.14],
+            ['12/16/2014', 98.54, 98.62, 97.08, 97.49],
+            ['12/19/2014', 97.92, 98.37, 96.98, 97.24],
+            ['12/20/2014', 98.07, 98.92, 97.93, 98.82],
+            ['12/21/2014', 98.98, 99.5, 98.7, 99.2],
+            ['12/22/2014', 99.24, 99.35, 98.55, 98.6],
+            ['12/23/2014', 98.84, 100.15, 98.76, 100.15],
+            ['12/27/2014', 100.17, 100.82, 100, 100.55],
+            ['12/28/2014', 100.73, 100.75, 99.46, 99.58],
+            ['12/29/2014', 99.75, 101, 99.6, 100.81],
+            ['12/30/2014', 100.43, 100.82, 100.06, 100.33]
+          ]
+        }];
+      });
+  </script>
+
+</body>
+</html>

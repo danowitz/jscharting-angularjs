@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stepline Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'stepLine',
+          title_label_text: 'Server Response Time',
+          legend_position: 'inside top right',
+          xAxis_crosshair_enabled: true,
+          yAxis: {
+            label_text: 'Response Time (ms)',
+            formatString: 'n0'
+          }
+        };
+
+        vm.series = [
+          {
+            name: 'Server A',
+            points: [
+              { name: '00:00', y: 45 },
+              { name: '02:00', y: 52 },
+              { name: '04:00', y: 48 },
+              { name: '06:00', y: 65 },
+              { name: '08:00', y: 89 },
+              { name: '10:00', y: 112 },
+              { name: '12:00', y: 98 },
+              { name: '14:00', y: 85 },
+              { name: '16:00', y: 78 },
+              { name: '18:00', y: 72 },
+              { name: '20:00', y: 58 },
+              { name: '22:00', y: 42 }
+            ]
+          },
+          {
+            name: 'Server B',
+            points: [
+              { name: '00:00', y: 38 },
+              { name: '02:00', y: 41 },
+              { name: '04:00', y: 39 },
+              { name: '06:00', y: 55 },
+              { name: '08:00', y: 78 },
+              { name: '10:00', y: 95 },
+              { name: '12:00', y: 88 },
+              { name: '14:00', y: 76 },
+              { name: '16:00', y: 68 },
+              { name: '18:00', y: 62 },
+              { name: '20:00', y: 48 },
+              { name: '22:00', y: 35 }
+            ]
+          }
+        ];
+      });
+  </script>
+
+</body>
+</html>

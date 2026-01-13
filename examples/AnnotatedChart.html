@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Annotated Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart jsc-options="vm.chartOptions" jsc-series="vm.series"></jsc-chart>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'line',
+          title_label_text: 'Company Revenue with Key Events',
+          legend_visible: false,
+          xAxis_scale_type: 'time',
+          yAxis: { label_text: 'Revenue (M$)', formatString: 'c' },
+          annotations: [
+            {
+              position: 'inside top left',
+              label: {
+                text: 'Product Launch',
+                style: { fontSize: 12 }
+              }
+            },
+            {
+              xValue: '6/1/2020',
+              yValue: 85,
+              label: {
+                text: 'New CEO',
+                style: { color: '#e74c3c' }
+              }
+            },
+            {
+              xValue: '9/1/2020',
+              yValue: 110,
+              label: {
+                text: 'Acquisition',
+                style: { color: '#27ae60' }
+              }
+            }
+          ],
+          yAxis_markers: [
+            {
+              value: 75,
+              label_text: 'Target: $75M',
+              color: 'rgba(231, 76, 60, 0.3)'
+            }
+          ]
+        };
+
+        vm.series = [{
+          name: 'Revenue',
+          points: [
+            ['1/1/2020', 45], ['2/1/2020', 52], ['3/1/2020', 58],
+            ['4/1/2020', 48], ['5/1/2020', 55], ['6/1/2020', 85],
+            ['7/1/2020', 92], ['8/1/2020', 88], ['9/1/2020', 110],
+            ['10/1/2020', 118], ['11/1/2020', 125], ['12/1/2020', 135]
+          ]
+        }];
+      });
+  </script>
+</body>
+</html>

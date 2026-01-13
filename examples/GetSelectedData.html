@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Selected Data | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+  <style>
+    .output-container {
+      width: 500px;
+      margin: 20px auto;
+    }
+    textarea {
+      width: 100%;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series"
+      jsc-on-point-selection-changed="vm.handleSelectionChanged(items)">
+    </jsc-chart>
+  </div>
+
+  <div class="output-container">
+    <label>Selected Points:</label>
+    <textarea cols="50" rows="5" ng-model="vm.selectedText" readonly></textarea>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    Programmatically acquire multiple user selected data points.
+    Learn how to:
+      - Programmatically get user selected data.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.selectedText = '';
+
+        var getPal = function(i) {
+          return JSC.colorToPalette(JSC.getPalette(0)[i], { hue: 0.1, saturation: 0.1, lightness: 0.5 }, 5, 0);
+        };
+
+        vm.handleSelectionChanged = function(items) {
+          if (items && items.length) {
+            var str = items.map(function(point) {
+              return point.replaceTokens('%seriesName %name %yValue');
+            });
+            vm.selectedText = str.join('\n');
+          } else {
+            vm.selectedText = '';
+          }
+        };
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'column',
+          legend: {
+            defaultEntry: {
+              checkbox_enabled: true,
+              hoverAction: false
+            },
+            template: '%checkbox,%icon,%name,%value'
+          },
+          annotations: [{
+            position: 'inside top left',
+            label_text: 'Click data points or legend to toggle selection.'
+          }],
+          defaultSeries_pointSelection: 'multiple',
+          toolbar_visible: false,
+          yAxis: { label_text: 'Units Sold' },
+          xAxis: { label_text: 'Quarter' },
+          title_label_text: 'Acme Tool Sales'
+        };
+
+        vm.series = [
+          {
+            name: 'Saw',
+            palette: getPal(0),
+            id: 's1',
+            points: [
+              ['Q1', 230],
+              ['Q2', 240],
+              ['Q3', 267],
+              ['Q4', 238]
+            ]
+          },
+          {
+            name: 'Hammer',
+            palette: getPal(1),
+            points: [
+              ['Q1', 325],
+              ['Q2', 347],
+              ['Q3', 392],
+              ['Q4', 371]
+            ]
+          },
+          {
+            name: 'Grinder',
+            palette: getPal(2),
+            points: [
+              ['Q1', 285],
+              ['Q2', 292],
+              ['Q3', 327],
+              ['Q4', 158]
+            ]
+          }
+        ];
+      });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Master Detail Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.masterOptions"
+      jsc-series="vm.masterSeries"
+      jsc-instance="vm.masterChart"
+      jsc-on-point-click="vm.handlePointClick(point)">
+    </jsc-chart>
+  </div>
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.detailOptions"
+      jsc-series="vm.detailSeries"
+      jsc-instance="vm.detailChart">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/types.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    Control a second detail chart by clicking on the master chart.
+    Learn how to:
+      - Use click events to interact with the chart to show details.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', ['$scope', function($scope) {
+        var vm = this;
+
+        // Sample data for the year 2020
+        var data = [];
+        var startDate = new Date(2020, 0, 1);
+        for (var d = 0; d < 365; d++) {
+          var date = new Date(startDate);
+          date.setDate(startDate.getDate() + d);
+          var value = Math.round(100 + Math.random() * 100 + Math.sin(d / 30) * 50);
+          data.push({ x: JSC.formatDate(date, 'M/d/yyyy'), y: value });
+        }
+
+        function getData(month, forDetail) {
+          var result = [];
+          data.forEach(function(point) {
+            if (new Date(Date.parse(point.x)).getMonth() === month) {
+              var day = new Date(point.x).getDate() + '';
+              result.push(forDetail ? { id: day, x: day, y: point.y } : point);
+            }
+          });
+          return result;
+        }
+
+        function getSumData() {
+          var result = [];
+          for (var i = 0; i < 12; i++) {
+            var mData = getData(i);
+            if (mData.length > 0) {
+              result.push({
+                x: mData[0].x,
+                y: JSC.sum(mData, 'y'),
+                attributes_items: mData.map(function(d) { return d.y + ''; }).join(',')
+              });
+            }
+          }
+          return result;
+        }
+
+        var mName = JSC.formatDate(new Date(2020, 0, 1), 'MMMM');
+
+        vm.masterOptions = {
+          debug: true,
+          type: 'column',
+          legend_visible: false,
+          title_label_text: 'Master Chart 2020',
+          xAxis: {
+            scale: {
+              type: 'time',
+              interval: { unit: 'month', multiplier: 1 }
+            },
+            formatString: 'MMM'
+          },
+          defaultPoint: {
+            tooltip: '%xValue <b>%yValue</b><br><chart type=column data=%items color=gray margin_top=10>'
+          },
+          defaultSeries_pointSelection: 'single'
+        };
+
+        vm.masterSeries = [{
+          name: 'All Months',
+          palette: 'default',
+          points: getSumData()
+        }];
+
+        vm.detailOptions = {
+          type: 'column',
+          animation_duration: 600,
+          title_label_text: 'Month of ' + mName,
+          defaultPoint_tooltip: 'January %xValue <b>%yValue</b>',
+          legend_visible: false
+        };
+
+        vm.detailSeries = [{ points: getData(0, true) }];
+
+        vm.handlePointClick = function(point) {
+          if (point && point.event) {
+            var date = new Date(point.event.x);
+            var month = date.getMonth();
+            var color = point.event.tokenValue ? point.event.tokenValue('%color') : '#666';
+            updateChart(month, color);
+          }
+        };
+
+        function updateChart(month, color) {
+          var monthName = JSC.formatDate(new Date(2020, month, 1), 'MMMM');
+
+          vm.detailOptions = angular.extend({}, vm.detailOptions, {
+            title_label_text: 'Month of ' + monthName
+          });
+
+          vm.detailSeries = [{
+            color: color,
+            defaultPoint_tooltip: monthName + ' %xValue <b>%yValue</b>',
+            points: getData(month, true)
+          }];
+        }
+      }]);
+  </script>
+
+</body>
+</html>

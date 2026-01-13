@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Radar Chord Diagram | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 500px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/types.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    A simple chord diagram without line curves using a radar chart type.
+    Learn how to:
+      - Draw a chord diagram.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'radar line',
+          yAxis: { visible: false, scale_range: [0, 5] },
+          xAxis: {
+            line_visible: false,
+            defaultTick: {
+              line_visible: false,
+              gridLine_visible: false
+            },
+            categories: [
+              'Fortran', 'Cobol', 'LISP', 'Basic', 'Algol 60', 'PL/1', 'C',
+              'Algol 68', 'Pascal', 'Simula', 'Smalltalk', 'Dylan', 'Scheme',
+              'ML', 'C++', 'Perl', 'Modula 3', 'Ada', 'Prolog', 'Java',
+              'C#', 'Python', 'Ruby'
+            ]
+          },
+          legend_visible: false,
+          defaultSeries: {
+            mouseTracking_enabled: false,
+            line: { color: '#424242' }
+          },
+          defaultPoint: { marker_visible: false }
+        };
+
+        // Language relationships
+        var connections = [
+          ['Fortran', 'Basic'], ['Fortran', 'Algol 60'], ['Fortran', 'PL/1'],
+          ['Cobol', 'PL/1'], ['LISP', 'Smalltalk'], ['LISP', 'Dylan'],
+          ['LISP', 'Scheme'], ['LISP', 'ML'], ['Algol 60', 'C'],
+          ['Algol 60', 'Algol 68'], ['Algol 60', 'Pascal'], ['Algol 60', 'Simula'],
+          ['Algol 60', 'PL/1'], ['C', 'C++'], ['C', 'Perl'],
+          ['Pascal', 'Modula 3'], ['Pascal', 'Ada'], ['Simula', 'C++'],
+          ['Simula', 'Ada'], ['Simula', 'Smalltalk'], ['C++', 'C#'],
+          ['C++', 'Java'], ['Perl', 'Python'], ['Modula 3', 'Python'],
+          ['Ada', 'Ruby'], ['Smalltalk', 'Python'], ['Dylan', 'Ruby'],
+          ['Java', 'C#'], ['Java', 'Python'], ['Python', 'Ruby']
+        ];
+
+        vm.series = connections.map(function(conn) {
+          return {
+            points: [
+              [conn[0], 5],
+              [conn[1], 5]
+            ]
+          };
+        });
+      });
+  </script>
+
+</body>
+</html>

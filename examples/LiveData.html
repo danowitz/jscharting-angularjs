@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Data | JSCharting AngularJS</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .chart-container { width: 100%; max-width: 800px; height: 400px; margin: 0 auto; }
+    .controls { text-align: center; margin: 20px 0; }
+    .controls button {
+      padding: 10px 20px;
+      margin: 0 5px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .stats { text-align: center; margin-top: 10px; color: #666; }
+  </style>
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-instance="vm.chart">
+    </jsc-chart>
+  </div>
+
+  <div class="controls">
+    <button ng-click="vm.toggleLive()" ng-class="{'active': vm.isLive}">
+      {{vm.isLive ? 'Stop' : 'Start'}} Live Data
+    </button>
+    <button ng-click="vm.reset()">Reset</button>
+  </div>
+
+  <div class="stats">
+    Data points: {{vm.pointCount}} | Update interval: {{vm.interval}}ms
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .config(['jscModuleLoaderProvider', function(jscModuleLoaderProvider) {
+        jscModuleLoaderProvider.setBaseUrl('../node_modules/jscharting/dist/');
+      }])
+      .controller('ChartController', ['$interval', 'jscChartFactory', function($interval, jscChartFactory) {
+        var vm = this;
+        var liveInterval = null;
+        var maxPoints = 50;
+
+        vm.isLive = false;
+        vm.interval = 500;
+        vm.pointCount = 0;
+
+        // Initialize with some data points
+        function generateInitialData() {
+          var points = [];
+          var now = Date.now();
+          for (var i = 30; i >= 0; i--) {
+            points.push({
+              x: new Date(now - i * vm.interval),
+              y: 50 + Math.random() * 50
+            });
+          }
+          vm.pointCount = points.length;
+          return points;
+        }
+
+        vm.chartOptions = {
+          type: 'line spline',
+          title: {
+            label: { text: 'Real-time Sensor Data' }
+          },
+          legend: { visible: false },
+          xAxis: {
+            scale: { type: 'time' },
+            label: { text: 'Time' }
+          },
+          yAxis: {
+            scale: { range: [0, 100] },
+            label: { text: 'Value' }
+          },
+          animation: { duration: 300 },
+          defaultPoint: {
+            marker: { visible: false },
+            tooltip: '%xValue<br/><b>%yValue</b>'
+          },
+          series: [{
+            name: 'Sensor',
+            color: '#2196F3',
+            points: generateInitialData()
+          }]
+        };
+
+        vm.toggleLive = function() {
+          if (vm.isLive) {
+            // Stop
+            if (liveInterval) {
+              $interval.cancel(liveInterval);
+              liveInterval = null;
+            }
+            vm.isLive = false;
+          } else {
+            // Start
+            vm.isLive = true;
+            liveInterval = $interval(function() {
+              if (vm.chart) {
+                var newPoint = {
+                  x: new Date(),
+                  y: 50 + Math.random() * 50
+                };
+
+                // Use jscChartFactory for adding points with shift
+                jscChartFactory.addPoints(vm.chart, 0, newPoint, {
+                  shift: vm.pointCount >= maxPoints
+                });
+
+                if (vm.pointCount < maxPoints) {
+                  vm.pointCount++;
+                }
+              }
+            }, vm.interval);
+          }
+        };
+
+        vm.reset = function() {
+          // Stop live updates
+          if (vm.isLive) {
+            vm.toggleLive();
+          }
+
+          // Reset chart with new initial data
+          if (vm.chart) {
+            vm.chart.options({
+              series: [{
+                name: 'Sensor',
+                color: '#2196F3',
+                points: generateInitialData()
+              }]
+            });
+          }
+        };
+
+        // Cleanup on scope destroy
+        vm.$onDestroy = function() {
+          if (liveInterval) {
+            $interval.cancel(liveInterval);
+          }
+        };
+      }]);
+  </script>
+
+</body>
+</html>

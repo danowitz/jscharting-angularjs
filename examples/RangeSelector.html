@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Range Selector | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+  <style>
+    .range-buttons {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .range-buttons button {
+      margin: 0 3px;
+      padding: 6px 12px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background: #f5f5f5;
+      border-radius: 4px;
+    }
+    .range-buttons button:hover {
+      background: #e0e0e0;
+    }
+    .range-buttons button.active {
+      background: #3498db;
+      color: white;
+      border-color: #3498db;
+    }
+    #mainChart {
+      width: 100%;
+      height: 350px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    #navigatorChart {
+      width: 100%;
+      height: 150px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .instructions {
+      text-align: center;
+      color: #666;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="range-buttons">
+    <button ng-click="vm.setRange('1M')" ng-class="{active: vm.activeRange === '1M'}">1M</button>
+    <button ng-click="vm.setRange('3M')" ng-class="{active: vm.activeRange === '3M'}">3M</button>
+    <button ng-click="vm.setRange('6M')" ng-class="{active: vm.activeRange === '6M'}">6M</button>
+    <button ng-click="vm.setRange('YTD')" ng-class="{active: vm.activeRange === 'YTD'}">YTD</button>
+    <button ng-click="vm.setRange('1Y')" ng-class="{active: vm.activeRange === '1Y'}">1Y</button>
+    <button ng-click="vm.setRange('ALL')" ng-class="{active: vm.activeRange === 'ALL'}">All</button>
+  </div>
+
+  <!-- Main chart -->
+  <div id="mainChart"></div>
+
+  <!-- Navigator chart -->
+  <div id="navigatorChart"></div>
+  <p class="instructions">Drag on the navigator chart below to select a custom range</p>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/toolbar.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    Range selector with navigator chart.
+    Based on: https://jscharting.com/examples/chart-features/interactivity/master-detail-slider/
+
+    Learn how to:
+      - Create a main chart with a navigator/overview chart
+      - Use axisToZoom and events.zoomed to link charts
+      - Use chart.axes('x').zoom(range) to sync zoom
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', ['$scope', function($scope) {
+        var vm = this;
+        vm.activeRange = 'ALL';
+        var mainChart = null;
+        var navigatorChart = null;
+        var isUpdating = false; // Prevent circular updates
+
+        // Generate 3 years of daily stock data
+        var allPoints = [];
+        var startDate = new Date(2021, 0, 1);
+        var endDate = new Date(2023, 11, 31);
+        var value = 150;
+
+        var currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+          // Skip weekends
+          if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
+            value += (Math.random() - 0.48) * 4;
+            value = Math.max(80, Math.min(250, value));
+            allPoints.push({
+              x: new Date(currentDate),
+              y: Math.round(value * 100) / 100
+            });
+          }
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        var lastDate = allPoints[allPoints.length - 1].x;
+        var firstDate = allPoints[0].x;
+
+        // Function to update main chart range
+        function updateMainChartRange(minDate, maxDate) {
+          if (mainChart && !isUpdating) {
+            isUpdating = true;
+            mainChart.axes('x').zoom([minDate, maxDate]);
+            isUpdating = false;
+          }
+        }
+
+        // Create main chart
+        mainChart = JSC.chart('mainChart', {
+          debug: false,
+          type: 'areaSpline',
+          title_label_text: 'Stock Performance with Range Selection',
+          legend_visible: false,
+          xAxis: {
+            scale_type: 'time',
+            crosshair_enabled: true
+          },
+          yAxis: {
+            formatString: 'c',
+            label_text: 'Price ($)',
+            scale_range_padding: 0.1
+          },
+          defaultPoint: {
+            marker_visible: false
+          },
+          defaultSeries: {
+            color: '#3498db',
+            opacity: 0.3,
+            line_color: '#3498db'
+          },
+          series: [{ name: 'Stock Price', points: allPoints }]
+        });
+
+        // Create navigator chart with zoom selection enabled
+        navigatorChart = JSC.chart('navigatorChart', {
+          debug: false,
+          type: 'areaSpline',
+          legend_visible: false,
+          title_label_text: '',
+          axisToZoom: 'x',
+          xAxis: {
+            scale_type: 'time',
+            defaultTick_label_visible: true,
+            markers: [{
+              value: [firstDate, lastDate],
+              color: ['#3498db', 0.3],
+              label_text: ''
+            }]
+          },
+          yAxis_visible: false,
+          defaultPoint_marker_visible: false,
+          defaultSeries: {
+            color: '#95a5a6',
+            opacity: 0.4,
+            line_color: '#7f8c8d'
+          },
+          toolbar: {
+            items: {
+              resetZoom: { visible: true, label_text: 'Reset' }
+            }
+          },
+          series: [{ name: 'Navigator', points: allPoints }],
+          events: {
+            zoomed: function(args) {
+              // args is an array: [xAxisInfo, yAxisInfo]
+              // xAxisInfo has: { min, max, range, interval }
+              if (args && args[0] && args[0].min !== undefined && args[0].max !== undefined) {
+                var minDate = args[0].min;
+                var maxDate = args[0].max;
+
+                // Update main chart
+                updateMainChartRange(minDate, maxDate);
+
+                // Update marker to show selection
+                navigatorChart.axes('x').markers(0).options({ value: [minDate, maxDate] });
+
+                // Clear active button
+                vm.activeRange = null;
+                $scope.$apply();
+              }
+            }
+          }
+        });
+
+        vm.setRange = function(range) {
+          vm.activeRange = range;
+          var minDate, maxDate = new Date(lastDate);
+
+          switch (range) {
+            case '1M':
+              minDate = new Date(lastDate);
+              minDate.setMonth(minDate.getMonth() - 1);
+              break;
+            case '3M':
+              minDate = new Date(lastDate);
+              minDate.setMonth(minDate.getMonth() - 3);
+              break;
+            case '6M':
+              minDate = new Date(lastDate);
+              minDate.setMonth(minDate.getMonth() - 6);
+              break;
+            case 'YTD':
+              minDate = new Date(lastDate.getFullYear(), 0, 1);
+              break;
+            case '1Y':
+              minDate = new Date(lastDate);
+              minDate.setFullYear(minDate.getFullYear() - 1);
+              break;
+            case 'ALL':
+            default:
+              minDate = new Date(firstDate);
+              maxDate = new Date(lastDate);
+              break;
+          }
+
+          // Update main chart
+          updateMainChartRange(minDate, maxDate);
+
+          // Update navigator marker to show selection
+          if (navigatorChart) {
+            navigatorChart.axes('x').markers(0).options({ value: [minDate, maxDate] });
+            // Reset navigator zoom to show full range
+            navigatorChart.axes('x').zoom([firstDate, lastDate]);
+          }
+        };
+
+        // Cleanup on scope destroy
+        $scope.$on('$destroy', function() {
+          if (mainChart) mainChart.destroy();
+          if (navigatorChart) navigatorChart.destroy();
+        });
+      }]);
+  </script>
+</body>
+</html>

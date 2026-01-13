@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Treemap Algorithm Modes | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series"
+      jsc-instance="vm.chart">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/toolbar.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/types.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    Treemap of top 20 country populations.
+    Learn how to:
+      - Change treemap layout algorithms.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', ['$scope', function($scope) {
+        var vm = this;
+        var currentAlgorithm = 'sliceAndDice';
+        var currentDirection = 'horizontal';
+
+        vm.setLayoutOptions = function() {
+          if (vm.chart) {
+            vm.chart.options({ type: ['treemap', currentAlgorithm, currentDirection].join(' ') });
+          }
+        };
+
+        vm.showHideDirectionItem = function(val) {
+          if (vm.chart) {
+            vm.chart.uiItems('TreemapAlgorithmDirection').visible(val);
+          }
+        };
+
+        vm.setLayoutAlgorithm = function(val) {
+          currentAlgorithm = val;
+          vm.showHideDirectionItem(val !== 'squarified');
+          vm.setLayoutOptions();
+        };
+
+        vm.setLayoutDirection = function(val) {
+          currentDirection = val;
+          vm.setLayoutOptions();
+        };
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'treemap sliceAndDice',
+          title_label_text: 'Treemap layout algorithms',
+          legend_visible: false,
+          defaultPoint: {
+            tooltip: '%name<br/>Population: %yvalue',
+            label_text: '%code {%yValue/1000000:N0}M'
+          },
+          toolbar: {
+            items: {
+              TreemapAlgorithm: {
+                type: 'select',
+                value: 'sliceAndDice',
+                items: 'squarified,sliceAndDice,stripes',
+                events_change: vm.setLayoutAlgorithm
+              },
+              TreemapAlgorithmDirection: {
+                type: 'select',
+                value: 'horizontal',
+                items: 'horizontal,vertical',
+                events_change: vm.setLayoutDirection
+              }
+            }
+          }
+        };
+
+        vm.series = [{
+          palette: {
+            pointValue: '%yValue',
+            colors: ['#bcd2f6', '#6296ea']
+          },
+          name: 'Countries',
+          points: [
+            { name: 'China', y: 1349585838, attributes: { code: 'CHN' } },
+            { name: 'India', y: 1220800359, attributes: { code: 'IND' } },
+            { name: 'European Union', y: 509365627, attributes: { code: 'EU' } },
+            { name: 'United States', y: 316438601, attributes: { code: 'USA' } },
+            { name: 'Indonesia', y: 251160124, attributes: { code: 'IDN' } },
+            { name: 'Brazil', y: 201009622, attributes: { code: 'BRA' } },
+            { name: 'Pakistan', y: 193238868, attributes: { code: 'PAK' } },
+            { name: 'Nigeria', y: 174507539, attributes: { code: 'NGA' } },
+            { name: 'Bangladesh', y: 163654860, attributes: { code: 'BGD' } },
+            { name: 'Russia', y: 142500482, attributes: { code: 'RUS' } },
+            { name: 'Japan', y: 127253075, attributes: { code: 'JPN' } },
+            { name: 'Mexico', y: 118818228, attributes: { code: 'MEX' } },
+            { name: 'Philippines', y: 105720644, attributes: { code: 'PHL' } },
+            { name: 'Ethiopia', y: 93877025, attributes: { code: 'ETH' } },
+            { name: 'Vietnam', y: 92477857, attributes: { code: 'VNM' } },
+            { name: 'Egypt', y: 85294388, attributes: { code: 'EGY' } },
+            { name: 'Germany', y: 81147265, attributes: { code: 'DEU' } },
+            { name: 'Turkey', y: 80694485, attributes: { code: 'TUR' } },
+            { name: 'Iran', y: 79853900, attributes: { code: 'IRN' } },
+            { name: 'Congo', y: 75507308, attributes: { code: 'COD' } }
+          ]
+        }];
+      }]);
+  </script>
+
+</body>
+</html>

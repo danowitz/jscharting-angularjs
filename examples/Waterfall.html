@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waterfall Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 640px; height: 300px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    A waterfall chart to analyze the cumulative effect of a sequence of positive and negative values.
+    Learn how to:
+      - Generate a waterfall chart.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        var styles = {
+          positive: { color: '#404040' },
+          negative: { color: '#fE4C14' },
+          total: { color: '#4285F4', label: { text: '%accum', style_fontSize: '15px' } }
+        };
+
+        function waterfallData(points) {
+          var last = 0;
+          var def = function(v) {
+            return v !== undefined;
+          };
+          points.forEach(function(p, i) {
+            var y, stl;
+            if (def(p.y)) {
+              y = [last, (last = last + p.y)];
+              stl = i ? (p.y >= 0 ? styles.positive : styles.negative) : styles.total;
+            } else {
+              y = [0, last];
+              stl = styles.total;
+            }
+            JSC.merge(p, { y: y, attributes_accum: last }, stl);
+          });
+          return points;
+        }
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'column',
+          legend: {
+            position: 'top left',
+            template: '%icon %name',
+            customEntries: [
+              { name: 'Increase', icon_color: styles.positive.color },
+              { name: 'Decrease', icon_color: styles.negative.color },
+              { name: 'Sum', icon_color: styles.total.color }
+            ]
+          },
+          defaultPoint: {
+            label: { text: '{%High-%Low}', align: 'center' },
+            tooltip: '%name %accum<br><b>{%High-%Low}</b>'
+          }
+        };
+
+        vm.series = [{
+          legendEntry_visible: false,
+          points: waterfallData([
+            { x: 'Start', y: 50 },
+            { x: 'B', y: 30 },
+            { x: 'C', y: 20 },
+            { x: 'Middle' },
+            { x: 'E', y: 10 },
+            { x: 'F', y: 20 },
+            { x: 'G', y: -50 },
+            { x: 'Total' }
+          ])
+        }];
+      });
+  </script>
+
+</body>
+</html>

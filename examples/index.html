@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSCharting AngularJS Examples</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f7fa;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #7f8c8d;
+      margin-bottom: 30px;
+    }
+    .category {
+      margin-bottom: 30px;
+    }
+    .category h2 {
+      color: #3498db;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+    .samples {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+    }
+    .sample-link {
+      display: block;
+      padding: 15px;
+      background: white;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #2c3e50;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .sample-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .sample-link .title {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .sample-link .desc {
+      font-size: 13px;
+      color: #7f8c8d;
+    }
+    .stats {
+      text-align: center;
+      padding: 20px;
+      background: #3498db;
+      color: white;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    .stats strong {
+      font-size: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>JSCharting AngularJS Examples</h1>
+    <p class="subtitle">Comprehensive AngularJS wrapper for JSCharting library</p>
+
+    <div class="stats">
+      <strong>35+</strong> Sample Implementations | <strong>150+</strong> Chart Types Supported
+    </div>
+
+    <div class="category">
+      <h2>Basic Charts</h2>
+      <div class="samples">
+        <a href="basic/index.html" class="sample-link">
+          <div class="title">Comprehensive Demo</div>
+          <div class="desc">Multiple chart types with live updates</div>
+        </a>
+        <a href="Lines.html" class="sample-link">
+          <div class="title">Line Chart</div>
+          <div class="desc">Basic line chart with multiple series</div>
+        </a>
+        <a href="Splines.html" class="sample-link">
+          <div class="title">Spline Chart</div>
+          <div class="desc">Smooth curved line chart</div>
+        </a>
+        <a href="Bars.html" class="sample-link">
+          <div class="title">Bar Chart</div>
+          <div class="desc">Horizontal bar chart</div>
+        </a>
+        <a href="StackedBars.html" class="sample-link">
+          <div class="title">Stacked Bar Chart</div>
+          <div class="desc">Stacked horizontal bars by category</div>
+        </a>
+        <a href="Stepline.html" class="sample-link">
+          <div class="title">Step Line Chart</div>
+          <div class="desc">Discrete step line visualization</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>Area Charts</h2>
+      <div class="samples">
+        <a href="Area.html" class="sample-link">
+          <div class="title">Area Chart</div>
+          <div class="desc">Basic area chart</div>
+        </a>
+        <a href="AreaSpline.html" class="sample-link">
+          <div class="title">Area Spline</div>
+          <div class="desc">Smooth area chart with curves</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>Pie & Donut Charts</h2>
+      <div class="samples">
+        <a href="Pie.html" class="sample-link">
+          <div class="title">Pie Chart</div>
+          <div class="desc">Basic pie chart with labels</div>
+        </a>
+        <a href="Donut.html" class="sample-link">
+          <div class="title">Donut Chart</div>
+          <div class="desc">Donut chart with center hole</div>
+        </a>
+        <a href="Funnel.html" class="sample-link">
+          <div class="title">Funnel Chart</div>
+          <div class="desc">Sales funnel visualization</div>
+        </a>
+        <a href="Pyramid.html" class="sample-link">
+          <div class="title">Pyramid Chart</div>
+          <div class="desc">Hierarchical pyramid chart</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>Scatter & Bubble Charts</h2>
+      <div class="samples">
+        <a href="Scatter.html" class="sample-link">
+          <div class="title">Scatter Chart</div>
+          <div class="desc">XY scatter plot with CSV data</div>
+        </a>
+        <a href="Bubble.html" class="sample-link">
+          <div class="title">Bubble Chart</div>
+          <div class="desc">Bubble chart with sizing modes</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>Radar Charts</h2>
+      <div class="samples">
+        <a href="Radar.html" class="sample-link">
+          <div class="title">Multi-Type Radar</div>
+          <div class="desc">Radar with different series types</div>
+        </a>
+        <a href="RadarArea.html" class="sample-link">
+          <div class="title">Radar Area</div>
+          <div class="desc">Radar chart with filled area</div>
+        </a>
+        <a href="ChordDiagram.html" class="sample-link">
+          <div class="title">Chord Diagram</div>
+          <div class="desc">Programming language relationships</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>Financial Charts</h2>
+      <div class="samples">
+        <a href="FinanceCandle.html" class="sample-link">
+          <div class="title">Candlestick Chart</div>
+          <div class="desc">OHLC candlestick financial chart</div>
+        </a>
+        <a href="BoxAndWhisker.html" class="sample-link">
+          <div class="title">Box and Whisker</div>
+          <div class="desc">Statistical box plot</div>
+        </a>
+        <a href="Waterfall.html" class="sample-link">
+          <div class="title">Waterfall Chart</div>
+          <div class="desc">Cumulative positive/negative values</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>Specialty Charts</h2>
+      <div class="samples">
+        <a href="Gauge.html" class="sample-link">
+          <div class="title">Gauge Chart</div>
+          <div class="desc">Gauge with needle pointers</div>
+        </a>
+        <a href="HeatMap.html" class="sample-link">
+          <div class="title">Heatmap</div>
+          <div class="desc">Color-coded data matrix</div>
+        </a>
+        <a href="TreemapModes.html" class="sample-link">
+          <div class="title">Treemap</div>
+          <div class="desc">Hierarchical treemap with algorithms</div>
+        </a>
+        <a href="ColumnComplete.html" class="sample-link">
+          <div class="title">Column Complete</div>
+          <div class="desc">Columns with completion indicator</div>
+        </a>
+        <a href="CircularActivity.html" class="sample-link">
+          <div class="title">Activity Rings</div>
+          <div class="desc">Animated circular activity rings</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>Map Charts</h2>
+      <div class="samples">
+        <a href="MapUS.html" class="sample-link">
+          <div class="title">US Map</div>
+          <div class="desc">US state choropleth map</div>
+        </a>
+        <a href="MapWorld.html" class="sample-link">
+          <div class="title">World Map</div>
+          <div class="desc">World countries map</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>Organizational & Gantt</h2>
+      <div class="samples">
+        <a href="Organizational.html" class="sample-link">
+          <div class="title">Organizational Chart</div>
+          <div class="desc">Company hierarchy org chart</div>
+        </a>
+        <a href="Gantt.html" class="sample-link">
+          <div class="title">Gantt Chart</div>
+          <div class="desc">Project timeline with dependencies</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>Calendar Charts</h2>
+      <div class="samples">
+        <a href="CalendarEvents.html" class="sample-link">
+          <div class="title">Calendar Events</div>
+          <div class="desc">Event calendar from CSV data</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>Data Grid</h2>
+      <div class="samples">
+        <a href="GridLive.html" class="sample-link">
+          <div class="title">Live Data Grid</div>
+          <div class="desc">Real-time updating data grid</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>Widget Gauges</h2>
+      <div class="samples">
+        <a href="WidgetGauges.html" class="sample-link">
+          <div class="title">Dashboard Gauges</div>
+          <div class="desc">Mixed gauge dashboard</div>
+        </a>
+        <a href="WidgetLinear.html" class="sample-link">
+          <div class="title">Linear Gauges</div>
+          <div class="desc">Horizontal linear gauge widgets</div>
+        </a>
+        <a href="WidgetCircular.html" class="sample-link">
+          <div class="title">Circular Gauges</div>
+          <div class="desc">Circular gauge widget dashboard</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>Interactive Features</h2>
+      <div class="samples">
+        <a href="LiveData.html" class="sample-link">
+          <div class="title">Live Data Updates</div>
+          <div class="desc">Real-time streaming data chart</div>
+        </a>
+        <a href="GetSelectedData.html" class="sample-link">
+          <div class="title">Point Selection</div>
+          <div class="desc">Multi-select data points</div>
+        </a>
+        <a href="MasterDetail.html" class="sample-link">
+          <div class="title">Master-Detail</div>
+          <div class="desc">Linked charts with drill-down</div>
+        </a>
+        <a href="BarChartRace.html" class="sample-link">
+          <div class="title">Bar Chart Race</div>
+          <div class="desc">Animated racing bar chart</div>
+        </a>
+        <a href="ZoomableChart.html" class="sample-link">
+          <div class="title">Zoomable Chart</div>
+          <div class="desc">Drag to zoom on chart data</div>
+        </a>
+        <a href="ZoomPan.html" class="sample-link">
+          <div class="title">Zoom and Pan</div>
+          <div class="desc">Toggle between zoom and pan modes</div>
+        </a>
+        <a href="RangeSelector.html" class="sample-link">
+          <div class="title">Range Selector</div>
+          <div class="desc">Navigator chart with range buttons</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circular Activity Rings Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 400px; height: 400px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-instance="vm.chart">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/toolbar.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/types.js"></script>
+  <script src="../node_modules/jscharting/dist/icons/material/maps/directions-run.js"></script>
+  <script src="../node_modules/jscharting/dist/icons/material/maps/directions-walk.js"></script>
+  <script src="../node_modules/jscharting/dist/icons/material/maps/directions-bike.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    Animated activity rings.
+    Learn how to:
+      - Draw live activity rings.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', ['$scope', '$interval', function($scope, $interval) {
+        var vm = this;
+        var intervalId = null;
+
+        function getPointVal(id) {
+          if (vm.chart) {
+            return vm.chart.series(0).points(id).options('y') + Math.round(Math.random() * 3);
+          }
+          return Math.round(Math.random() * 30);
+        }
+
+        function getRandomPoints() {
+          return [
+            { id: 'r', y: getPointVal('r') },
+            { id: 'w', y: getPointVal('w') },
+            { id: 's', y: getPointVal('s') }
+          ];
+        }
+
+        function startUpdate() {
+          intervalId = $interval(function() {
+            if (vm.chart) {
+              vm.chart.series(0).options({ points: getRandomPoints() });
+            }
+          }, 500);
+        }
+
+        function playPause(val) {
+          if (val === true) {
+            if (intervalId) {
+              $interval.cancel(intervalId);
+              intervalId = null;
+            }
+          } else {
+            startUpdate();
+          }
+        }
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'gauge',
+          legend: { position: 'bottom' },
+          animation_duration: 400,
+          xAxis_spacingPercentage: 0.1,
+          yAxis: { line_width: 0, scale_range: [0, 100] },
+          defaultSeries: {
+            type: 'column roundCaps',
+            angle: { sweep: 360, start: -90 },
+            shape_innerSize: '30%'
+          },
+          defaultTooltip_visible: false,
+          series: [{
+            palette: ['#E10715', '#3FDC00', '#3EBAE1'],
+            name: 'Activities',
+            defaultPoint: {
+              marker: {
+                fill: 'white',
+                outline: { width: 0, color: 'white' },
+                visible: true,
+                size: 17
+              }
+            },
+            points: [
+              { x: 'Running', id: 'r', y: 30, marker_type: 'material/maps/directions-run' },
+              { x: 'Walking', id: 'w', y: 25, marker_type: 'material/maps/directions-walk' },
+              { x: 'Biking', id: 's', y: 20, marker_type: 'material/maps/directions-bike' }
+            ]
+          }],
+          toolbar: {
+            items: {
+              Stop: {
+                type: 'option',
+                value: true,
+                icon_name: 'system/default/pause',
+                boxVisible: true,
+                label_text: 'Pause',
+                events: { change: playPause },
+                states_select: {
+                  label_text: 'Play',
+                  icon_name: 'system/default/play'
+                }
+              }
+            }
+          }
+        };
+
+        // Cleanup on destroy
+        $scope.$on('$destroy', function() {
+          if (intervalId) {
+            $interval.cancel(intervalId);
+          }
+        });
+      }]);
+  </script>
+
+</body>
+</html>

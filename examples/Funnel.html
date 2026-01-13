@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standard Funnel Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 480px; height: 360px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/types.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    Basic Funnel chart.
+    Learn how to:
+      - Draw a funnel chart.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'funnel',
+          legend_visible: false,
+          annotations: [{
+            position: 'inside top',
+            margin_top: 15,
+            label: { text: 'Interview Process', style_fontSize: 15 }
+          }],
+          defaultSeries: {
+            shape_innerPadding: 6,
+            defaultPoint: {
+              tooltip: '<b>%name</b><br><b>Applicants:</b> %yValue',
+              label: {
+                text: '%name %yValue (%percentOfSeriesMax%)',
+                placement: 'outside'
+              }
+            }
+          }
+        };
+
+        vm.series = [{
+          name: 'All Applicants',
+          points: [
+            { name: 'Candidates Applied', y: 183 },
+            { name: 'Aptitude Test', y: 140 },
+            { name: 'Technical Interview', y: 136 },
+            { name: 'HR Interview', y: 80 },
+            { name: 'Candidates Recruited', y: 51 }
+          ]
+        }];
+      });
+  </script>
+
+</body>
+</html>

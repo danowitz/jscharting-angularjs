@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grid Live | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+  <style>
+    .jscGrid table tbody tr:nth-child(2n + 1) {
+      background: white;
+    }
+    .controls {
+      text-align: center;
+      margin: 10px 0;
+    }
+    .controls button {
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div id="sample" style="max-width: 360px; margin: 0px auto;">
+    <div class="grid-container" style="max-width: 360px; margin: 0px auto;">
+      <jsc-grid
+        jsc-data="vm.gridData"
+        jsc-columns="vm.columns"
+        jsc-instance="vm.grid">
+      </jsc-grid>
+    </div>
+    <div class="controls">
+      <button ng-click="vm.toggleUpdates()">
+        {{vm.isRunning ? 'Stop' : 'Start'}}
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/datagrid.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    Simulated live data updates of data grid.
+    Learn how to:
+      - Update data grid with live data.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', ['$interval', function($interval) {
+        var vm = this;
+        var serverInterval = null;
+        var pollInterval = null;
+        var pollServerMS = 200;
+
+        // Simulated server data
+        var fauxServerData = { A: 50, B: 60, C: 50, D: 55 };
+
+        vm.isRunning = true;
+
+        vm.columns = [
+          { value: '%machine' },
+          { value: '%temp' },
+          { header: ' ', width: '190px', value: '<chart bar data=%temp min=0 max=100 width=190px>' }
+        ];
+
+        vm.gridData = [];
+
+        // Get data from simulated server
+        function getFauxDataFromServer() {
+          var result = [];
+          for (var i in fauxServerData) {
+            result.push({ machine: i, temp: fauxServerData[i] });
+          }
+          return result;
+        }
+
+        // Simulate data changes on server
+        function updateServerData() {
+          for (var i in fauxServerData) {
+            fauxServerData[i] = Math.round(100 * (fauxServerData[i] + (Math.random() * 0.2 - 0.1))) / 100;
+          }
+        }
+
+        function startServerEmulator() {
+          serverInterval = $interval(updateServerData, 20);
+        }
+
+        function startPolling() {
+          pollInterval = $interval(function() {
+            vm.gridData = getFauxDataFromServer();
+          }, pollServerMS);
+        }
+
+        function stopAll() {
+          if (serverInterval) {
+            $interval.cancel(serverInterval);
+            serverInterval = null;
+          }
+          if (pollInterval) {
+            $interval.cancel(pollInterval);
+            pollInterval = null;
+          }
+        }
+
+        vm.toggleUpdates = function() {
+          if (vm.isRunning) {
+            stopAll();
+            vm.isRunning = false;
+          } else {
+            startServerEmulator();
+            startPolling();
+            vm.isRunning = true;
+          }
+        };
+
+        // Initialize
+        vm.gridData = getFauxDataFromServer();
+        startServerEmulator();
+        startPolling();
+
+        // Cleanup
+        vm.$onDestroy = function() {
+          stopAll();
+        };
+      }]);
+  </script>
+
+</body>
+</html>

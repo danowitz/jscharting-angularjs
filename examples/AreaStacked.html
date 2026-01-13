@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stacked Area Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart jsc-options="vm.chartOptions" jsc-series="vm.series"></jsc-chart>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'area stacked',
+          title_label_text: 'Website Traffic by Source',
+          legend_position: 'bottom',
+          xAxis_crosshair_enabled: true,
+          yAxis_label_text: 'Visitors'
+        };
+
+        vm.series = [
+          {
+            name: 'Direct',
+            points: [
+              ['Jan', 1200], ['Feb', 1400], ['Mar', 1300], ['Apr', 1500],
+              ['May', 1700], ['Jun', 1600], ['Jul', 1800], ['Aug', 1900]
+            ]
+          },
+          {
+            name: 'Organic Search',
+            points: [
+              ['Jan', 2500], ['Feb', 2700], ['Mar', 2900], ['Apr', 3100],
+              ['May', 3400], ['Jun', 3200], ['Jul', 3600], ['Aug', 3800]
+            ]
+          },
+          {
+            name: 'Social Media',
+            points: [
+              ['Jan', 800], ['Feb', 950], ['Mar', 1100], ['Apr', 1250],
+              ['May', 1400], ['Jun', 1350], ['Jul', 1500], ['Aug', 1650]
+            ]
+          }
+        ];
+      });
+  </script>
+</body>
+</html>

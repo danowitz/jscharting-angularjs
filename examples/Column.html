@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Column Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart jsc-options="vm.chartOptions" jsc-series="vm.series"></jsc-chart>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'column',
+          title_label_text: 'Quarterly Revenue Comparison',
+          legend_position: 'inside top right',
+          yAxis: { label_text: 'Revenue ($)', formatString: 'c' },
+          xAxis_label_text: 'Quarter'
+        };
+
+        vm.series = [
+          {
+            name: '2022',
+            points: [
+              { name: 'Q1', y: 45000 },
+              { name: 'Q2', y: 52000 },
+              { name: 'Q3', y: 48000 },
+              { name: 'Q4', y: 61000 }
+            ]
+          },
+          {
+            name: '2023',
+            points: [
+              { name: 'Q1', y: 52000 },
+              { name: 'Q2', y: 58000 },
+              { name: 'Q3', y: 55000 },
+              { name: 'Q4', y: 72000 }
+            ]
+          }
+        ];
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Area Radar Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 540px; height: 500px; margin: 0px auto;">
+    <jsc-radar
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series">
+    </jsc-radar>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/types.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    Radar chart with styled area series.
+    Learn how to:
+      - Draw radar with styled area.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'radar area',
+          legend_visible: false,
+          title: {
+            position: 'center',
+            label: {
+              text: '2020 Sales',
+              style: { fontSize: 15, fontWeight: 'normal' }
+            }
+          },
+          defaultSeries: {
+            opacity: 0.7,
+            defaultPoint_marker: {
+              outline: { color: 'white', width: 2 },
+              size: 12
+            }
+          }
+        };
+
+        vm.series = [{
+          points: [
+            { name: 'Jan', y: 196 },
+            { name: 'Feb', y: 178 },
+            { name: 'Mar', y: 169 },
+            { name: 'Apr', y: 166 },
+            { name: 'May', y: 172 },
+            { name: 'Jun', y: 132 },
+            { name: 'Jul', y: 95 },
+            { name: 'Aug', y: 66 },
+            { name: 'Sep', y: 127 },
+            { name: 'Oct', y: 142 },
+            { name: 'Nov', y: 158 },
+            { name: 'Dec', y: 197 }
+          ]
+        }];
+      });
+  </script>
+
+</body>
+</html>

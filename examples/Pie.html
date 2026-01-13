@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pie Chart | JSCharting AngularJS</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #chartDiv { width: 100%; max-width: 600px; height: 500px; margin: 0 auto; }
+  </style>
+</head>
+<body ng-controller="ChartController as vm">
+
+  <jsc-chart
+    jsc-options="vm.chartOptions"
+    jsc-on-point-click="vm.onSliceClick(point)"
+    jsc-instance="vm.chart">
+  </jsc-chart>
+
+  <div style="text-align: center; margin-top: 20px;" ng-if="vm.selectedSlice">
+    <strong>Selected:</strong> {{vm.selectedSlice}}
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .config(['jscModuleLoaderProvider', function(jscModuleLoaderProvider) {
+        jscModuleLoaderProvider.setBaseUrl('../node_modules/jscharting/dist/');
+      }])
+      .controller('ChartController', ['$scope', function($scope) {
+        var vm = this;
+        vm.selectedSlice = null;
+
+        vm.chartOptions = {
+          type: 'pie',
+          title: {
+            label: { text: 'Energy Consumption by Source' }
+          },
+          legend: { position: 'right' },
+          defaultPoint: {
+            tooltip: '<b>%name</b><br/>%yValue TWh (%percentOfTotal%)',
+            label: {
+              text: '%name<br/>%percentOfTotal%',
+              placement: 'inside'
+            }
+          },
+          series: [{
+            name: 'Energy',
+            points: [
+              { name: 'Natural Gas', y: 1450 },
+              { name: 'Coal', y: 890 },
+              { name: 'Nuclear', y: 780 },
+              { name: 'Renewable', y: 620 },
+              { name: 'Oil', y: 340 }
+            ]
+          }]
+        };
+
+        vm.onSliceClick = function(point) {
+          vm.selectedSlice = point.tokenValue('%name') + ': ' + point.tokenValue('%yValue') + ' TWh';
+          $scope.$apply();
+        };
+      }]);
+  </script>
+
+</body>
+</html>

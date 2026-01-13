@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stacked Bar Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'horizontal column stacked',
+          title_label_text: 'Revenue by Product Category',
+          legend_position: 'bottom',
+          yAxis: {
+            formatString: 'c',
+            label_text: 'Revenue'
+          },
+          xAxis_label_text: 'Region'
+        };
+
+        vm.series = [
+          {
+            name: 'Electronics',
+            points: [
+              { name: 'North', y: 125000 },
+              { name: 'South', y: 98000 },
+              { name: 'East', y: 115000 },
+              { name: 'West', y: 142000 }
+            ]
+          },
+          {
+            name: 'Clothing',
+            points: [
+              { name: 'North', y: 78000 },
+              { name: 'South', y: 89000 },
+              { name: 'East', y: 72000 },
+              { name: 'West', y: 95000 }
+            ]
+          },
+          {
+            name: 'Home & Garden',
+            points: [
+              { name: 'North', y: 45000 },
+              { name: 'South', y: 52000 },
+              { name: 'East', y: 48000 },
+              { name: 'West', y: 61000 }
+            ]
+          }
+        ];
+      });
+  </script>
+
+</body>
+</html>

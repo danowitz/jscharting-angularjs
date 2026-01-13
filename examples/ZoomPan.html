@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zoom and Pan | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+  <style>
+    .controls {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .controls button {
+      margin: 0 5px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    .controls button.active {
+      background-color: #3498db;
+      color: white;
+    }
+  </style>
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="controls">
+    <button ng-click="vm.setMode('zoom')" ng-class="{active: vm.mode === 'zoom'}">Zoom Mode</button>
+    <button ng-click="vm.setMode('pan')" ng-class="{active: vm.mode === 'pan'}">Pan Mode</button>
+    <button ng-click="vm.resetZoom()">Reset View</button>
+  </div>
+
+  <div class="chart-container" style="max-width: 900px; height: 450px; margin: 0 auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series"
+      jsc-instance="vm.chart">
+    </jsc-chart>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    Zoom and Pan interactive chart example.
+    Learn how to:
+      - Enable zooming with drag selection
+      - Enable panning after zooming
+      - Toggle between zoom and pan modes
+      - Reset zoom programmatically
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', ['jscChartFactory', '$scope', function(jscChartFactory, $scope) {
+        var vm = this;
+        vm.mode = 'zoom';
+
+        // Generate sample time series data (2 years of daily data)
+        var points = [];
+        var startDate = new Date(2022, 0, 1);
+        var value = 100;
+        for (var i = 0; i < 730; i++) {
+          var date = new Date(startDate);
+          date.setDate(startDate.getDate() + i);
+          // Random walk with trend
+          value += (Math.random() - 0.48) * 5;
+          value = Math.max(50, Math.min(200, value));
+          points.push({
+            x: date,
+            y: Math.round(value * 100) / 100
+          });
+        }
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'line',
+          title_label_text: 'Stock Price - Zoom and Pan',
+          axisToZoom: 'xy',
+          xAxis: {
+            scale_type: 'time',
+            crosshair_enabled: true
+          },
+          yAxis: {
+            formatString: 'c',
+            label_text: 'Price ($)',
+            crosshair_enabled: true
+          },
+          defaultPoint: {
+            marker_visible: false,
+            tooltip: '%xValue<br>Price: <b>%yValue</b>'
+          },
+          legend_visible: false,
+          annotations: [{
+            position: 'inside top left',
+            label_text: 'Use buttons to switch between Zoom and Pan modes'
+          }]
+        };
+
+        vm.series = [{
+          name: 'Stock Price',
+          color: '#3498db',
+          points: points
+        }];
+
+        vm.setMode = function(mode) {
+          vm.mode = mode;
+          if (vm.chart) {
+            if (mode === 'pan') {
+              // Enable panning, disable zoom selection
+              vm.chart.options({
+                axisToZoom: 'none',
+                xAxis_scale_zoomPanEnabled: true,
+                yAxis_scale_zoomPanEnabled: true
+              });
+            } else {
+              // Enable zoom selection
+              vm.chart.options({
+                axisToZoom: 'xy',
+                xAxis_scale_zoomPanEnabled: false,
+                yAxis_scale_zoomPanEnabled: false
+              });
+            }
+          }
+        };
+
+        vm.resetZoom = function() {
+          if (vm.chart) {
+            jscChartFactory.resetZoom(vm.chart);
+          }
+        };
+      }]);
+  </script>
+</body>
+</html>

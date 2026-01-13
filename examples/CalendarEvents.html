@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event List Calendar Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 780px; height: 600px; margin: 0px auto;">
+    <jsc-calendar
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series">
+    </jsc-calendar>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/types.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    An events calendar based on CSV data.
+    Learn how to:
+      - Get CSV calendar events.
+      - Bind CSV data with calendar cells.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', ['jscDataService', function(jscDataService) {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'calendar month solid',
+          title: {
+            margin_bottom: 15,
+            label: {
+              text: 'July 2018',
+              style: {
+                fontSize: 20,
+                fontFamily: 'Arial',
+                fontWeight: 'bold',
+                color: '#0b7285'
+              }
+            }
+          },
+          yAxis_visible: false,
+          legend_visible: false,
+          calendar: {
+            range: ['7/1/2018', '7/31/2018'],
+            defaultEdgePoint: { color: 'white', label_color: '#83b2b7', mouseTracking: false }
+          },
+          defaultSeries: {
+            shape_innerPadding: 0,
+            mouseTracking_enabled: false,
+            defaultPoint: {
+              tooltip_enabled: false,
+              states_hover: { color: '#e3fafc' },
+              label: {
+                text: '<span style="align:right; font-size:14px;"><b>%name</b></span><br>%events',
+                align: 'left',
+                verticalAlign: 'top',
+                padding: 3,
+                style: {
+                  fontWeight: 'bold',
+                  color: '#1098ad',
+                  fontFamily: 'Arial'
+                }
+              },
+              attributes_events: ''
+            }
+          }
+        };
+
+        vm.series = [];
+
+        // Load CSV data
+        jscDataService.loadCsv('./resources/events_data.csv').then(function(data) {
+          vm.series = [{
+            points: data.map(function(row) {
+              var startDate = new Date(row[0] || row.start);
+              var endDate = new Date(row[1] || row.end);
+              var eventName = row[2] || row.event;
+
+              var labelText =
+                '<br><span style="color:#78909c;font-size:12px; font-weight:normal">' +
+                eventName +
+                '</span>' +
+                " <br><span style='font-size:9px; font-weight:normal; color:#9da9af;'>" +
+                JSC.formatDate(startDate, 't') +
+                ' - ' +
+                JSC.formatDate(endDate, 't') +
+                '</span>';
+
+              return {
+                date: [startDate, endDate],
+                attributes: { events: [labelText] }
+              };
+            })
+          }];
+        });
+      }]);
+  </script>
+
+</body>
+</html>

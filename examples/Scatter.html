@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classic Scatter Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series"
+      jsc-instance="vm.chart">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    Scatter chart.
+    Learn how to:
+      - Draw a scatter chart.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', ['jscDataService', function(jscDataService) {
+        var vm = this;
+
+        vm.chartOptions = {
+          title_label_text: 'Correlation of energy consumption and GDP per person',
+          defaultPoint: {
+            tooltip: '<b>%country</b><br>Energy use: <b>%xValue</b><br>GDP per capita: <b>%yValue</b>',
+            opacity: 0.8,
+            marker: {
+              type: 'circle',
+              outline_width: 0,
+              size: 12
+            }
+          },
+          axisToZoom: 'xy',
+          legend_visible: false,
+          yAxis: {
+            label_text: 'GDP per capita, PPP (current international $)',
+            alternateGridFill: 'none',
+            scale_zoomLimit: 5000
+          },
+          xAxis: {
+            label_text: 'Energy use (kg of oil equivalent per capita)',
+            scale_zoomLimit: 100
+          }
+        };
+
+        vm.series = [];
+
+        // Load CSV data
+        jscDataService.loadCsv('./resources/GPDAndEnergyUse.csv').then(function(data) {
+          vm.series = [{
+            name: 'GDP',
+            type: 'marker',
+            points: data.map(function(item) {
+              return {
+                x: parseFloat(item.energy_use),
+                y: parseFloat(item.gdp),
+                attributes_country: item.country
+              };
+            })
+          }];
+        });
+      }]);
+  </script>
+
+</body>
+</html>

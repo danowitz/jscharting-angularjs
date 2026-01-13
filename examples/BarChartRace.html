@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Bar Chart Race | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 460px; height: 880px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-instance="vm.chart">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/toolbar.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    An animated bar chart race of employment numbers by state.
+    Learn how to:
+      - Create a bar chart race animation.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', ['$scope', '$timeout', 'jscDataService', function($scope, $timeout, jscDataService) {
+        var vm = this;
+        var data = [];
+        var stopped = true;
+        var timer = null;
+        var frameDelay = 10;
+        var currentDate = '01/01/2007';
+        var startDate = '01/01/2007';
+        var endDate = '09/01/2019';
+
+        var regionColors = {
+          Northeast: '#fdef96',
+          Midwest: '#f7b71d',
+          South: '#afa939',
+          West: '#2b580c'
+        };
+
+        function formatAnnotation(dt) {
+          var year = dt.getFullYear();
+          var month = JSC.formatDate(dt, 'MMM');
+          return (
+            '<span style="font-size:20px; font-weight:bold; width:20px; verticalAlign:middle">' +
+            month +
+            '</span><span style="font-size:40px; font-weight:bold; width:130px; align:right;">' +
+            year +
+            '</span><br>Total Number of Employees:<br><span style="font-size:24px; font-weight:bold; width:180px;margin:0 0 0 -2px">{%sum*1000:n0}</span>'
+          );
+        }
+
+        function makeSeries(chartData) {
+          var dateStr = currentDate + '_date';
+          chartData.sort(function(a, b) {
+            return b[dateStr] - a[dateStr];
+          });
+          return [{
+            points: chartData.map(function(item) {
+              return {
+                x: chartData.indexOf(item),
+                id: item.state,
+                y: item[dateStr],
+                color: regionColors[item.region]
+              };
+            })
+          }];
+        }
+
+        function moveSlider(date, cb) {
+          var dt = new Date(date);
+          currentDate = JSC.formatDate(new Date(dt.getFullYear(), dt.getMonth(), 1), 'MM/dd/yyyy');
+
+          if (vm.chart) {
+            vm.chart.annotations('year').options({ label_text: formatAnnotation(dt) });
+            vm.chart.uiItems('slider').options({ value: dt.getTime() });
+            vm.chart.series(0).options({ points: makeSeries(data)[0].points }, { then: cb });
+          }
+        }
+
+        function animateChart() {
+          if (!stopped) {
+            timer = $timeout(function() {
+              var dt = new Date(currentDate);
+              currentDate = dt.setMonth(dt.getMonth() + 1);
+              if (currentDate >= new Date(endDate).getTime()) {
+                $timeout.cancel(timer);
+                currentDate = startDate;
+                if (vm.chart) {
+                  vm.chart.uiItems('slider').options({ value: new Date(currentDate).getTime() });
+                }
+                playPause(true);
+              }
+              moveSlider(currentDate, animateChart);
+            }, frameDelay);
+          }
+        }
+
+        function playPause(val) {
+          if (val) {
+            if (!stopped) {
+              if (vm.chart) {
+                vm.chart.uiItems('Pause').options({ label_text: 'Play', icon_name: 'system/default/play' });
+              }
+              $timeout.cancel(timer);
+              stopped = true;
+            }
+          } else {
+            if (stopped) {
+              if (vm.chart) {
+                vm.chart.uiItems('Pause').options({ label_text: 'Pause', icon_name: 'system/default/pause' });
+              }
+              stopped = false;
+              animateChart();
+            }
+          }
+        }
+
+        vm.chartOptions = {
+          type: 'horizontal column solid',
+          animation: { duration: 200 },
+          margin_right: 30,
+          yAxis: {
+            scale_range: { padding: 0.1, min: 0 },
+            orientation: 'opposite',
+            overflow: 'hidden'
+          },
+          xAxis: {
+            defaultTick_enabled: false,
+            scale: { invert: true },
+            alternateGridFill: 'none'
+          },
+          title: {
+            position: 'center',
+            label: {
+              margin_bottom: 40,
+              text: 'US Total Number of Employees by State, Thousands of Persons'
+            }
+          },
+          annotations: [{
+            id: 'year',
+            label: { text: formatAnnotation(new Date(startDate)) },
+            position: 'inside right'
+          }],
+          legend: {
+            template: '%icon %name',
+            position: 'inside top right',
+            layout: 'vertical',
+            margin_top: 50,
+            customEntries: [
+              { name: 'Northeast', icon: { color: regionColors['Northeast'] } },
+              { name: 'Midwest', icon: { color: regionColors['Midwest'] } },
+              { name: 'South', icon: { color: regionColors['South'] } },
+              { name: 'West', icon: { color: regionColors['West'] } }
+            ]
+          },
+          defaultPoint: { label_text: '%id: <b>%yvalue</b>' },
+          defaultSeries: {
+            legendEntry_visible: false,
+            mouseTracking_enabled: false
+          },
+          series: [],
+          toolbar: {
+            defaultItem: {
+              position: 'inside top',
+              offset: '0,-65',
+              boxVisible: false,
+              margin: 6
+            },
+            items: {
+              startLabel: {
+                type: 'label',
+                label_text: new Date(startDate).getFullYear() + ''
+              },
+              slider: {
+                type: 'range',
+                width: 240,
+                debounce: 20,
+                value: new Date(startDate).getTime(),
+                min: new Date(startDate).getTime(),
+                max: new Date(endDate).getTime(),
+                events_change: function(val) {
+                  moveSlider(val);
+                  playPause(true);
+                }
+              },
+              endLabel: {
+                type: 'label',
+                label_text: new Date(endDate).getFullYear() + ''
+              },
+              Pause: {
+                type: 'option',
+                value: false,
+                width: 50,
+                margin: [6, 6, 6, 16],
+                icon_name: 'system/default/pause',
+                label_text: 'Pause',
+                events_change: function() {
+                  playPause(!stopped);
+                }
+              }
+            }
+          }
+        };
+
+        // Load CSV data
+        jscDataService.loadCsv('./resources/US_employees.csv').then(function(csvData) {
+          data = csvData;
+          vm.chartOptions.series = makeSeries(data);
+
+          // Start animation after chart loads
+          $timeout(function() {
+            if (vm.chart) {
+              playPause(false);
+            }
+          }, 500);
+        });
+
+        // Cleanup
+        $scope.$on('$destroy', function() {
+          if (timer) {
+            $timeout.cancel(timer);
+          }
+        });
+      }]);
+  </script>
+
+</body>
+</html>

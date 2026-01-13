@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basic Donut Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 450px; height: 360px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/types.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    A donut chart with labels.
+    Learn how to:
+      - Draw a donut chart.
+      - Label a donut chart.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          legend: {
+            position: 'inside left bottom',
+            template: '%value {%percentOfTotal:n1}% %icon %name'
+          },
+          title_position: 'center',
+          defaultSeries_type: 'pieDonut',
+          defaultPoint_label_text: '<b>%name</b>',
+          title_label_text: 'Countries GDP',
+          yAxis: { label_text: 'GDP', formatString: 'n' }
+        };
+
+        vm.series = [{
+          name: 'Countries',
+          points: [
+            { name: 'United States', y: 5452500 },
+            { name: 'Canada', y: 786052 },
+            { name: 'United Kingdom', y: 477338 },
+            { name: 'Mexico', y: 155313 }
+          ]
+        }];
+      });
+  </script>
+
+</body>
+</html>

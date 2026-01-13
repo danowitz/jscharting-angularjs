@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Series | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="controls">
+    <button ng-click="vm.addSeries()">Add Series</button>
+    <button ng-click="vm.removeSeries()" ng-disabled="vm.series.length <= 1">Remove Series</button>
+    <button ng-click="vm.updateData()">Update Data</button>
+  </div>
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart jsc-options="vm.chartOptions" jsc-series="vm.series"></jsc-chart>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+        var seriesCount = 0;
+        var colors = ['#3498db', '#e74c3c', '#2ecc71', '#9b59b6', '#f39c12'];
+
+        function generatePoints() {
+          var points = [];
+          for (var i = 1; i <= 6; i++) {
+            points.push({ name: 'Month ' + i, y: Math.round(Math.random() * 100) + 20 });
+          }
+          return points;
+        }
+
+        function createSeries() {
+          seriesCount++;
+          return {
+            name: 'Series ' + seriesCount,
+            color: colors[(seriesCount - 1) % colors.length],
+            points: generatePoints()
+          };
+        }
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'column',
+          title_label_text: 'Dynamic Series Management',
+          legend_position: 'bottom',
+          animation_duration: 400,
+          yAxis_label_text: 'Value'
+        };
+
+        vm.series = [createSeries(), createSeries()];
+
+        vm.addSeries = function() {
+          if (vm.series.length < 5) {
+            vm.series = vm.series.concat([createSeries()]);
+          }
+        };
+
+        vm.removeSeries = function() {
+          if (vm.series.length > 1) {
+            vm.series = vm.series.slice(0, -1);
+          }
+        };
+
+        vm.updateData = function() {
+          vm.series = vm.series.map(function(s) {
+            return angular.extend({}, s, { points: generatePoints() });
+          });
+        };
+      });
+  </script>
+</body>
+</html>

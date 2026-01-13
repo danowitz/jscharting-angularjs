@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linear Widget Examples | JSCharting AngularJS</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+    h1 { text-align: center; color: #333; }
+    .dashboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .widget-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      min-width: 300px;
+    }
+    .widget-card h3 {
+      margin: 0 0 15px 0;
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
+    .widget-container {
+      height: 80px;
+    }
+    .controls {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .controls button {
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+  </style>
+</head>
+<body ng-controller="WidgetController as vm">
+
+  <h1>Linear Gauge Widgets</h1>
+
+  <div class="controls">
+    <button ng-click="vm.randomize()">Randomize Values</button>
+  </div>
+
+  <div class="dashboard">
+    <div class="widget-card">
+      <h3>Download Speed</h3>
+      <div class="widget-container">
+        <jsc-linear-widget
+          jsc-value="vm.downloadSpeed"
+          jsc-min="0"
+          jsc-max="1000"
+          jsc-label="'Mbps'"
+          jsc-color="'#2196F3'"
+          jsc-target="800">
+        </jsc-linear-widget>
+      </div>
+    </div>
+
+    <div class="widget-card">
+      <h3>Upload Speed</h3>
+      <div class="widget-container">
+        <jsc-linear-widget
+          jsc-value="vm.uploadSpeed"
+          jsc-min="0"
+          jsc-max="500"
+          jsc-label="'Mbps'"
+          jsc-color="'#4CAF50'"
+          jsc-target="400">
+        </jsc-linear-widget>
+      </div>
+    </div>
+
+    <div class="widget-card">
+      <h3>Temperature</h3>
+      <div class="widget-container">
+        <jsc-linear-widget
+          jsc-value="vm.temperature"
+          jsc-min="0"
+          jsc-max="100"
+          jsc-label="'°C'"
+          jsc-color="vm.getTemperatureColor(vm.temperature)">
+        </jsc-linear-widget>
+      </div>
+    </div>
+
+    <div class="widget-card">
+      <h3>Battery Level</h3>
+      <div class="widget-container">
+        <jsc-linear-widget
+          jsc-value="vm.battery"
+          jsc-min="0"
+          jsc-max="100"
+          jsc-label="'%'"
+          jsc-color="vm.getBatteryColor(vm.battery)">
+        </jsc-linear-widget>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting-widgets.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('WidgetController', function() {
+        var vm = this;
+
+        vm.downloadSpeed = 650;
+        vm.uploadSpeed = 320;
+        vm.temperature = 45;
+        vm.battery = 78;
+
+        vm.getTemperatureColor = function(value) {
+          if (value > 80) return '#F44336';
+          if (value > 60) return '#FF9800';
+          return '#4CAF50';
+        };
+
+        vm.getBatteryColor = function(value) {
+          if (value < 20) return '#F44336';
+          if (value < 50) return '#FF9800';
+          return '#4CAF50';
+        };
+
+        vm.randomize = function() {
+          vm.downloadSpeed = Math.round(Math.random() * 1000);
+          vm.uploadSpeed = Math.round(Math.random() * 500);
+          vm.temperature = Math.round(Math.random() * 100);
+          vm.battery = Math.round(Math.random() * 100);
+        };
+      });
+  </script>
+
+</body>
+</html>

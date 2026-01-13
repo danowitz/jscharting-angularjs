@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>US Map | JSCharting AngularJS</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .chart-container { width: 100%; max-width: 900px; height: 600px; margin: 0 auto; }
+    .info { text-align: center; margin-top: 20px; font-size: 18px; color: #333; }
+  </style>
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container">
+    <jsc-map
+      jsc-map="US"
+      jsc-options="vm.mapOptions"
+      jsc-series="vm.mapSeries"
+      jsc-palette="vm.palette"
+      jsc-on-point-click="vm.onStateClick(point)"
+      jsc-instance="vm.chart">
+    </jsc-map>
+  </div>
+
+  <div class="info" ng-if="vm.selectedState">
+    <strong>{{vm.selectedState.name}}</strong>: Population {{vm.selectedState.population | number}}
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/modules/maps.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .config(['jscModuleLoaderProvider', function(jscModuleLoaderProvider) {
+        jscModuleLoaderProvider.setBaseUrl('../node_modules/jscharting/dist/');
+      }])
+      .controller('ChartController', ['$scope', function($scope) {
+        var vm = this;
+        vm.selectedState = null;
+
+        // Population data for US states (sample)
+        var statePopulations = {
+          'US.CA': { name: 'California', pop: 39538223 },
+          'US.TX': { name: 'Texas', pop: 29145505 },
+          'US.FL': { name: 'Florida', pop: 21538187 },
+          'US.NY': { name: 'New York', pop: 20201249 },
+          'US.PA': { name: 'Pennsylvania', pop: 13002700 },
+          'US.IL': { name: 'Illinois', pop: 12812508 },
+          'US.OH': { name: 'Ohio', pop: 11799448 },
+          'US.GA': { name: 'Georgia', pop: 10711908 },
+          'US.NC': { name: 'North Carolina', pop: 10439388 },
+          'US.MI': { name: 'Michigan', pop: 10077331 }
+        };
+
+        vm.mapOptions = {
+          title: {
+            label: { text: 'US Population by State' }
+          },
+          legend: {
+            position: 'bottom',
+            title_label_text: 'Population'
+          },
+          defaultPoint: {
+            tooltip: '<b>%name</b><br/>Population: %zValue:n0'
+          }
+        };
+
+        vm.mapSeries = [{
+          name: 'Population',
+          points: Object.keys(statePopulations).map(function(code) {
+            return {
+              map: code,
+              z: statePopulations[code].pop,
+              attributes: {
+                stateName: statePopulations[code].name
+              }
+            };
+          })
+        }];
+
+        vm.palette = {
+          pointValue: '%zValue',
+          colors: ['#E3F2FD', '#1565C0']
+        };
+
+        vm.onStateClick = function(point) {
+          var code = point.tokenValue('%map');
+          var data = statePopulations[code];
+          if (data) {
+            vm.selectedState = {
+              name: data.name,
+              population: data.pop
+            };
+          }
+          $scope.$apply();
+        };
+      }]);
+  </script>
+
+</body>
+</html>

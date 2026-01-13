@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spline Chart | JSCharting AngularJS</title>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body ng-controller="ChartController as vm">
+
+  <div class="chart-container" style="max-width: 740px; height: 400px; margin: 0px auto;">
+    <jsc-chart
+      jsc-options="vm.chartOptions"
+      jsc-series="vm.series">
+    </jsc-chart>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    /*
+    Spline chart with smooth curves.
+    Learn how to:
+      - Draw a spline chart.
+    */
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('ChartController', function() {
+        var vm = this;
+
+        vm.chartOptions = {
+          debug: true,
+          type: 'spline',
+          legend_position: 'inside top right',
+          title_label_text: 'Monthly Sales Performance',
+          xAxis: {
+            crosshair_enabled: true
+          },
+          yAxis: {
+            label_text: 'Sales ($)',
+            formatString: 'c'
+          }
+        };
+
+        vm.series = [
+          {
+            name: 'Sales 2023',
+            points: [
+              { name: 'Jan', y: 45000 },
+              { name: 'Feb', y: 52000 },
+              { name: 'Mar', y: 48000 },
+              { name: 'Apr', y: 61000 },
+              { name: 'May', y: 55000 },
+              { name: 'Jun', y: 67000 },
+              { name: 'Jul', y: 72000 },
+              { name: 'Aug', y: 68000 },
+              { name: 'Sep', y: 75000 },
+              { name: 'Oct', y: 81000 },
+              { name: 'Nov', y: 89000 },
+              { name: 'Dec', y: 95000 }
+            ]
+          },
+          {
+            name: 'Sales 2022',
+            points: [
+              { name: 'Jan', y: 38000 },
+              { name: 'Feb', y: 42000 },
+              { name: 'Mar', y: 45000 },
+              { name: 'Apr', y: 48000 },
+              { name: 'May', y: 51000 },
+              { name: 'Jun', y: 54000 },
+              { name: 'Jul', y: 58000 },
+              { name: 'Aug', y: 55000 },
+              { name: 'Sep', y: 62000 },
+              { name: 'Oct', y: 68000 },
+              { name: 'Nov', y: 72000 },
+              { name: 'Dec', y: 78000 }
+            ]
+          }
+        ];
+      });
+  </script>
+
+</body>
+</html>

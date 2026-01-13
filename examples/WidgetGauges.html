@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Widget Gauges | JSCharting AngularJS</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+    h1 { text-align: center; color: #333; }
+    .dashboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .widget-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      width: 250px;
+    }
+    .widget-card h3 {
+      margin: 0 0 15px 0;
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
+    .widget-container {
+      height: 180px;
+    }
+    .controls {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .controls button {
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+  </style>
+</head>
+<body ng-controller="DashboardController as vm">
+
+  <h1>Real-time Dashboard</h1>
+
+  <div class="controls">
+    <button ng-click="vm.toggleUpdates()">
+      {{vm.isUpdating ? 'Stop' : 'Start'}} Updates
+    </button>
+    <button ng-click="vm.randomize()">Randomize</button>
+  </div>
+
+  <div class="dashboard">
+    <!-- Circular Gauge - CPU -->
+    <div class="widget-card">
+      <h3>CPU Usage</h3>
+      <div class="widget-container">
+        <jsc-circular-widget
+          jsc-value="vm.metrics.cpu"
+          jsc-min="0"
+          jsc-max="100"
+          jsc-label="'CPU'"
+          jsc-color="vm.getColor(vm.metrics.cpu)"
+          jsc-options="vm.circularOptions">
+        </jsc-circular-widget>
+      </div>
+    </div>
+
+    <!-- Circular Gauge - Memory -->
+    <div class="widget-card">
+      <h3>Memory Usage</h3>
+      <div class="widget-container">
+        <jsc-circular-widget
+          jsc-value="vm.metrics.memory"
+          jsc-min="0"
+          jsc-max="100"
+          jsc-label="'Memory'"
+          jsc-color="vm.getColor(vm.metrics.memory)"
+          jsc-options="vm.circularOptions">
+        </jsc-circular-widget>
+      </div>
+    </div>
+
+    <!-- Circular Gauge - Disk -->
+    <div class="widget-card">
+      <h3>Disk Usage</h3>
+      <div class="widget-container">
+        <jsc-circular-widget
+          jsc-value="vm.metrics.disk"
+          jsc-min="0"
+          jsc-max="100"
+          jsc-label="'Disk'"
+          jsc-color="vm.getColor(vm.metrics.disk)"
+          jsc-options="vm.circularOptions">
+        </jsc-circular-widget>
+      </div>
+    </div>
+
+    <!-- Linear Gauge - Network -->
+    <div class="widget-card">
+      <h3>Network Bandwidth</h3>
+      <div class="widget-container">
+        <jsc-linear-widget
+          jsc-value="vm.metrics.network"
+          jsc-min="0"
+          jsc-max="1000"
+          jsc-label="'Mbps'"
+          jsc-color="'#2196F3'"
+          jsc-target="800"
+          jsc-options="vm.linearOptions">
+        </jsc-linear-widget>
+      </div>
+    </div>
+
+    <!-- Linear Gauge - Active Users -->
+    <div class="widget-card">
+      <h3>Active Users</h3>
+      <div class="widget-container">
+        <jsc-linear-widget
+          jsc-value="vm.metrics.users"
+          jsc-min="0"
+          jsc-max="500"
+          jsc-label="'Users'"
+          jsc-color="'#9C27B0'"
+          jsc-prev-value="vm.prevMetrics.users"
+          jsc-options="vm.linearOptions">
+        </jsc-linear-widget>
+      </div>
+    </div>
+
+    <!-- Linear Gauge - Requests/sec -->
+    <div class="widget-card">
+      <h3>Requests/sec</h3>
+      <div class="widget-container">
+        <jsc-linear-widget
+          jsc-value="vm.metrics.requests"
+          jsc-min="0"
+          jsc-max="10000"
+          jsc-label="'req/s'"
+          jsc-color="'#FF9800'"
+          jsc-prev-value="vm.prevMetrics.requests"
+          jsc-options="vm.linearOptions">
+        </jsc-linear-widget>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting.js"></script>
+  <script src="../node_modules/jscharting/dist/jscharting-widgets.js"></script>
+  <script src="../dist/jscharting-angularjs.js"></script>
+
+  <script>
+    angular.module('sampleApp', ['jsc.angular'])
+      .controller('DashboardController', ['$interval', function($interval) {
+        var vm = this;
+        var updateInterval = null;
+
+        vm.isUpdating = false;
+
+        vm.metrics = {
+          cpu: 45,
+          memory: 62,
+          disk: 78,
+          network: 450,
+          users: 234,
+          requests: 5600
+        };
+
+        vm.prevMetrics = angular.copy(vm.metrics);
+
+        vm.circularOptions = {
+          innerRadius: 0.7,
+          sweep: 270,
+          startAngle: -135
+        };
+
+        vm.linearOptions = {
+          orientation: 'horizontal'
+        };
+
+        vm.getColor = function(value) {
+          if (value > 80) return '#F44336';
+          if (value > 60) return '#FF9800';
+          return '#4CAF50';
+        };
+
+        vm.randomize = function() {
+          vm.prevMetrics = angular.copy(vm.metrics);
+          vm.metrics = {
+            cpu: Math.round(Math.random() * 100),
+            memory: Math.round(Math.random() * 100),
+            disk: Math.round(50 + Math.random() * 50),
+            network: Math.round(Math.random() * 1000),
+            users: Math.round(Math.random() * 500),
+            requests: Math.round(Math.random() * 10000)
+          };
+        };
+
+        vm.toggleUpdates = function() {
+          if (vm.isUpdating) {
+            $interval.cancel(updateInterval);
+            vm.isUpdating = false;
+          } else {
+            vm.isUpdating = true;
+            updateInterval = $interval(function() {
+              vm.randomize();
+            }, 2000);
+          }
+        };
+
+        // Cleanup
+        vm.$onDestroy = function() {
+          if (updateInterval) {
+            $interval.cancel(updateInterval);
+          }
+        };
+      }]);
+  </script>
+
+</body>
+</html>
